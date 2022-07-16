@@ -12,3 +12,7 @@ Theme announcement video
 ...Has nothing to do with the game jam. I just want to get a good behavior tree implementation going.
 
 Halo. Halo. Halo.
+
+## Play
+[Play in QA](https://aallbrig.github.io/gmtk-2022-behavior-trees-take-two/WebGL/index.html)
+![QR code for QA environment](./media/qa-env-qr.png)
