@@ -12,7 +12,7 @@ namespace Tests.PlayMode.MonoBehaviours
         [UnityTest]
         public IEnumerator MainControlsMenu_StartsWith_NothingSelected()
         {
-            var sut = new GameObject().AddComponent<MainControlsMenu>();
+            var sut = new GameObject().AddComponent<PlayerControlsMenu>();
             yield return null;
 
             Assert.AreEqual(

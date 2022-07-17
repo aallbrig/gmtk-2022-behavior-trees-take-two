@@ -2,6 +2,8 @@ namespace MonoBehaviours.UI
 {
     public interface IControlButton
     {
-        public void Execute();
+        public string Label { get; }
+        public string Description { get; }
+        public void Execute(IControlsMenu ctx);
     }
 }
