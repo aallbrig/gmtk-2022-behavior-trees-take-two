@@ -11,7 +11,8 @@ namespace ScriptableObjects
 
         public void Execute()
         {
-            Debug.Log("Melee Control Button executed");
+            Debug.Log($"{Label} Control Button executed");
+            Debug.Log($"{Description}");
         }
     }
 }

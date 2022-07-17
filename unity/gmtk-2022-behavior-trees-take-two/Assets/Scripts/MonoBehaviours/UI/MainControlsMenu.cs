@@ -12,24 +12,25 @@ namespace MonoBehaviours.UI
         public IPlayerActionState CurrentState { get; private set; }
         public Transform controlButtonContainer;
         public GameObject controlButtonPrefab;
-        private Transform _controlButtonContainer;
         public List<AbstractControlButton> controlButtons = new List<AbstractControlButton>();
 
         private void Start()
         {
-            _controlButtonContainer ??= controlButtonContainer ? controlButtonContainer : throw new ArgumentNullException();
             CurrentState ??= new NothingSelectedState();
             RenderControlButtons();
         }
 
+        [ContextMenu("Render Control Buttons")]
         private void RenderControlButtons()
         {
             controlButtons.ForEach(controlButton =>
             {
-                var instance = Instantiate(controlButtonPrefab, _controlButtonContainer);
+                var soClone = ScriptableObject.Instantiate(controlButton);
+                var instance = Instantiate(controlButtonPrefab, controlButtonContainer);
+                instance.name = soClone.Description;
                 var btn = instance.GetComponent<ILabelSetter>();
                 if (btn != null)
-                    btn.SetLabel(controlButton.Label);
+                    btn.SetLabel(soClone.Label);
                 else
                     Debug.LogError("No label setter detected");
             });
