@@ -9,10 +9,9 @@ namespace ScriptableObjects
 
         public abstract string Description { get; }
 
-        public void Execute()
+        public virtual void Execute()
         {
-            Debug.Log($"{Label} Control Button executed");
-            Debug.Log($"{Description}");
+            Debug.Log($"{Label} Control Button executed. Description: {Description}");
         }
     }
 }

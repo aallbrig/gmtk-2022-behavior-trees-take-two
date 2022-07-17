@@ -2,8 +2,9 @@ using UnityEngine;
 
 namespace ScriptableObjects.Firearms
 {
-    public class AbstractFirearm : ScriptableObject
+    public abstract class AbstractFirearm : ScriptableObject
     {
-        
+        public abstract Ammo GetAmmo();
+        public abstract void Fire();
     }
 }

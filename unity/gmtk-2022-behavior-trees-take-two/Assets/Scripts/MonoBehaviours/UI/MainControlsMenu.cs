@@ -4,6 +4,7 @@ using Model.Interfaces;
 using Model.Player;
 using ScriptableObjects;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace MonoBehaviours.UI
 {
@@ -17,22 +18,39 @@ namespace MonoBehaviours.UI
         private void Start()
         {
             CurrentState ??= new NothingSelectedState();
+            controlButtonContainer ??= transform; // use self as container, if none passed in
             RenderControlButtons();
         }
+
+        private void ClearContainerChildren()
+        {
+            if (ContainerHasChildren() == false) return;
+
+            foreach (Transform t in controlButtonContainer.transform)
+                Destroy(t.gameObject);
+        }
+
+        private bool ContainerHasChildren() => controlButtonContainer.transform.childCount > 0;
 
         [ContextMenu("Render Control Buttons")]
         private void RenderControlButtons()
         {
+            ClearContainerChildren();
             controlButtons.ForEach(controlButton =>
             {
-                var soClone = ScriptableObject.Instantiate(controlButton);
+                var soClone = Instantiate(controlButton);
                 var instance = Instantiate(controlButtonPrefab, controlButtonContainer);
                 instance.name = soClone.Description;
-                var btn = instance.GetComponent<ILabelSetter>();
-                if (btn != null)
-                    btn.SetLabel(soClone.Label);
+                var label = instance.GetComponent<ILabelSetter>();
+                if (label != null)
+                    label.SetLabel(soClone.Label);
                 else
                     Debug.LogError("No label setter detected");
+                var btn = instance.GetComponent<Button>();
+                if (btn != null)
+                    btn.onClick.AddListener(soClone.Execute);
+                else
+                    Debug.LogError("No button detected");
             });
         }
     }

@@ -7,5 +7,10 @@ namespace ScriptableObjects.Firearms.Options
     {
         public Ammo ammo;
         public float fireRatePerSecond = 2.0f;
+        public override Ammo GetAmmo() => ammo;
+        public override void Fire()
+        {
+            Debug.Log("Pistol has been fired");
+        }
     }
 }
