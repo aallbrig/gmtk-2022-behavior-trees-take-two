@@ -8,23 +8,16 @@ using UnityEngine.UI;
 
 namespace MonoBehaviours.UI
 {
-    public class PlayerControlsMenu : MonoBehaviour, IPlayerActionFSM, IControlsMenu
+    public class PlayerControlsMenu : MonoBehaviour, IControlsMenu
     {
-        public IPlayerActionState CurrentState { get; private set; }
         public Transform primaryControlsContainer;
         public Transform secondaryControlsContainer;
         public GameObject controlButtonPrefab;
         public List<AbstractControlButton> primaryMenuControlButtons = new List<AbstractControlButton>();
         public List<AbstractControlButton> secondaryMenuControlButtons = new List<AbstractControlButton>();
-        [Header("DEBUGGING")]
-        [SerializeField]
-        private List<Transform> runtimePrimaryMenuControlButtons = new List<Transform>();
-        [SerializeField]
-        private List<Transform> runtimeSecondaryControlButtons = new List<Transform>();
 
         private void Start()
         {
-            CurrentState ??= new NothingSelectedState();
             var parentTransform = transform;
             primaryControlsContainer ??= new GameObject { transform = { parent = parentTransform }}.transform; // use self as container, if none passed in
             secondaryControlsContainer ??= new GameObject { transform = { parent = parentTransform }}.transform; // use self as container, if none passed in
@@ -42,18 +35,12 @@ namespace MonoBehaviours.UI
         public void PopulatePrimaryMenu(List<IControlButton> buttons)
         {
             DeleteChildrenInContainer(primaryControlsContainer);
-            var transforms = RenderControlButtons(primaryControlsContainer, buttons);
-
-            runtimePrimaryMenuControlButtons.Clear();
-            runtimePrimaryMenuControlButtons.AddRange(transforms);
+            RenderControlButtons(primaryControlsContainer, buttons);
         }
         public void PopulateSecondaryMenu(List<IControlButton> buttons)
         {
             DeleteChildrenInContainer(secondaryControlsContainer);
-            var transforms = RenderControlButtons(secondaryControlsContainer, buttons);
-
-            runtimeSecondaryControlButtons.Clear();
-            runtimeSecondaryControlButtons.AddRange(transforms);
+            RenderControlButtons(secondaryControlsContainer, buttons);
         }
         public void ResetSecondaryMenu()
         {
@@ -66,9 +53,9 @@ namespace MonoBehaviours.UI
                 Destroy(t.gameObject);
         }
 
-        private IEnumerable<Transform> RenderControlButtons(Transform container, IEnumerable<IControlButton> buttons)
+        private void RenderControlButtons(Transform container, IEnumerable<IControlButton> buttons)
         {
-            return buttons.Select(controlButton =>
+            foreach (var controlButton in buttons)
             {
                 var instance = Instantiate(controlButtonPrefab, container);
 
@@ -85,9 +72,7 @@ namespace MonoBehaviours.UI
                     btn.onClick.AddListener(() => controlButton.Execute(this));
                 else
                     Debug.LogError("No button detected");
-
-                return instance.transform;
-            });
+            }
         }
     }
 }

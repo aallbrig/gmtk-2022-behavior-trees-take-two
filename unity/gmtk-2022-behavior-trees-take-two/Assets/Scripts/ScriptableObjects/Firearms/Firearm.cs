@@ -1,12 +1,14 @@
 using System;
 using Model.Interfaces;
+using MonoBehaviours.UI;
 using UnityEngine;
 
 namespace ScriptableObjects.Firearms
 {
     [CreateAssetMenu(fileName = "New Firearm", menuName = "Game/Firearms/New firearm", order = 0)]
-    public class Firearm : ScriptableObject, IFirearm
+    public class Firearm : ScriptableObject, IFirearm, IControlButton
     {
+        public event Action FirearmSelected;
         public event Action<IAmmo> FirearmFired;
         public event Action FirearmReloaded;
 
@@ -40,6 +42,16 @@ namespace ScriptableObjects.Firearms
         {
             // Instantiate so each firearm can manipulate its own ammo
             _ammo = Instantiate(ammo);
+        }
+
+        public string Label => firearmName;
+
+        public string Description => $"{firearmName} fire rate {fireRatePerSecond} with ammo {_ammo}";
+
+        public void Execute(IControlsMenu ctx)
+        {
+            FirearmSelected?.Invoke();
+            ctx.ResetSecondaryMenu();
         }
     }
 }

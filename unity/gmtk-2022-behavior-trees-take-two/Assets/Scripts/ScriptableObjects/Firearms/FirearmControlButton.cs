@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using MonoBehaviours.UI;
-using ScriptableObjects.Firearms.Options;
 using UnityEngine;
 
 namespace ScriptableObjects.Firearms
@@ -9,7 +8,7 @@ namespace ScriptableObjects.Firearms
     [CreateAssetMenu(fileName = "Firearm", menuName = "Game/UI/Firearm Control Button", order = 0)]
     public class FirearmControlButton : AbstractControlButton
     {
-        public List<FirearmSecondaryControlButton> firearmOptions = new List<FirearmSecondaryControlButton>();
+        public List<Firearm> firearmOptions = new List<Firearm>();
 
         public override string Label => "Firearm";
 

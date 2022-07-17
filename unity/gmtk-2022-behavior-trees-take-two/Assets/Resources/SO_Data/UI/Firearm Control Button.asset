@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Firearm Control Button
   m_EditorClassIdentifier: 
   firearmOptions:
-  - {fileID: 11400000, guid: 1d621cded1aed42f7907ada1c83ce751, type: 2}
-  - {fileID: 11400000, guid: 7e7b2c6c0e55a41a98e05274c66cf037, type: 2}
+  - {fileID: 11400000, guid: d0baf51ef2e514d8f8e503a0ec8d24d2, type: 2}
+  - {fileID: 11400000, guid: f5b9bc058a36c49a9b1d63e4bc89fbe6, type: 2}
