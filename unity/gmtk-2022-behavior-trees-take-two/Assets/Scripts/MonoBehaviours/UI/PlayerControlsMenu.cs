@@ -18,10 +18,9 @@ namespace MonoBehaviours.UI
         public List<AbstractControlButton> secondaryMenuControlButtons = new List<AbstractControlButton>();
         [Header("DEBUGGING")]
         [SerializeField]
-        private List<Transform> PrimaryMenuControlButtons = new List<Transform>();
+        private List<Transform> runtimePrimaryMenuControlButtons = new List<Transform>();
         [SerializeField]
-        private List<Transform> SecondaryMenuControlButtons = new List<Transform>();
-        private List<Transform> _activeControlButtons = new List<Transform>();
+        private List<Transform> runtimeSecondaryControlButtons = new List<Transform>();
 
         private void Start()
         {
@@ -45,16 +44,20 @@ namespace MonoBehaviours.UI
             DeleteChildrenInContainer(primaryControlsContainer);
             var transforms = RenderControlButtons(primaryControlsContainer, buttons);
 
-            PrimaryMenuControlButtons.Clear();
-            PrimaryMenuControlButtons.AddRange(transforms);
+            runtimePrimaryMenuControlButtons.Clear();
+            runtimePrimaryMenuControlButtons.AddRange(transforms);
         }
         public void PopulateSecondaryMenu(List<IControlButton> buttons)
         {
             DeleteChildrenInContainer(secondaryControlsContainer);
             var transforms = RenderControlButtons(secondaryControlsContainer, buttons);
 
-            SecondaryMenuControlButtons.Clear();
-            SecondaryMenuControlButtons.AddRange(transforms);
+            runtimeSecondaryControlButtons.Clear();
+            runtimeSecondaryControlButtons.AddRange(transforms);
+        }
+        public void ResetSecondaryMenu()
+        {
+            DeleteChildrenInContainer(secondaryControlsContainer);
         }
 
         private void DeleteChildrenInContainer(Transform container)

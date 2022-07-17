@@ -6,5 +6,6 @@ namespace MonoBehaviours.UI
     {
         public void PopulatePrimaryMenu(List<IControlButton> buttons);
         public void PopulateSecondaryMenu(List<IControlButton> buttons);
+        public void ResetSecondaryMenu();
     }
 }

@@ -9,7 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd778b0ab4f24a6bb4f5c8bed2f1aa9e, type: 3}
-  m_Name: Pistol control button
+  m_Script: {fileID: 11500000, guid: bea63645272746a0b10dd060b9173321, type: 3}
+  m_Name: Basic Assault Rifle Ammo
   m_EditorClassIdentifier: 
-  firearm: {fileID: 11400000, guid: d0baf51ef2e514d8f8e503a0ec8d24d2, type: 2}
+  bulletsPerClip: 60
+  maxClipCarryCount: 5

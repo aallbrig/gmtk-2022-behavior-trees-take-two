@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using MonoBehaviours.UI;
 using ScriptableObjects.Firearms.Options;
 using UnityEngine;
@@ -17,6 +18,8 @@ namespace ScriptableObjects.Firearms
         public override void Execute(IControlsMenu ctx)
         {
             if (firearmOptions.Count == 0) return;
+
+            ctx.PopulateSecondaryMenu(firearmOptions.ToList<IControlButton>());
         }
     }
 }

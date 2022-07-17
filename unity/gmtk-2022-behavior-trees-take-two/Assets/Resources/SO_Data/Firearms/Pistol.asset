@@ -9,7 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd778b0ab4f24a6bb4f5c8bed2f1aa9e, type: 3}
-  m_Name: Pistol control button
+  m_Script: {fileID: 11500000, guid: eba26469732547eea538eb4941cb69ea, type: 3}
+  m_Name: Pistol
   m_EditorClassIdentifier: 
-  firearm: {fileID: 11400000, guid: d0baf51ef2e514d8f8e503a0ec8d24d2, type: 2}
+  firearmName: Pistol
+  fireRatePerSecond: 2
+  ammo: {fileID: 11400000, guid: cb3ae5076d39c47a18eae98a201697af, type: 2}

@@ -9,8 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9152c5e57914be0a0a4c2d06689b5c9, type: 3}
-  m_Name: Firearm Control Button
+  m_Script: {fileID: 11500000, guid: eba26469732547eea538eb4941cb69ea, type: 3}
+  m_Name: Assault Rifle
   m_EditorClassIdentifier: 
-  firearmOptions:
-  - {fileID: 11400000, guid: 1d621cded1aed42f7907ada1c83ce751, type: 2}
+  firearmName: Assault Rifle
+  fireRatePerSecond: 0.25
+  ammo: {fileID: 11400000, guid: 3f47a574a94344de3b4dad64ae8f77f8, type: 2}
