@@ -7,12 +7,12 @@ using UnityEngine.TestTools;
 
 namespace Tests.PlayMode.MonoBehaviours
 {
-    public class MainMenuTests
+    public class MainControlsMenuTests
     {
         [UnityTest]
-        public IEnumerator MainMenu_StartsWith_NothingSelected()
+        public IEnumerator MainControlsMenu_StartsWith_NothingSelected()
         {
-            var sut = new GameObject().AddComponent<MainMenu>();
+            var sut = new GameObject().AddComponent<MainControlsMenu>();
             yield return null;
 
             Assert.AreEqual(
