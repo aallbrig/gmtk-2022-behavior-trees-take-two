@@ -4,8 +4,7 @@ namespace Model.AI.BehaviorTrees
 {
     public interface IBehavior
     {
-        public void OnStart();
-        public void OnTerminate();
+        public Status CurrentStatus { get; }
         public Status Tick();
     }
 }

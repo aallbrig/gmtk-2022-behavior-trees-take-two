@@ -1,9 +1,6 @@
-using System.Collections;
 using Model.AI.BehaviorTrees;
 using NSubstitute;
 using NUnit.Framework;
-using UnityEditor;
-using UnityEngine.TestTools;
 
 namespace Tests.EditMode.Model.AI.BehaviorTrees
 {

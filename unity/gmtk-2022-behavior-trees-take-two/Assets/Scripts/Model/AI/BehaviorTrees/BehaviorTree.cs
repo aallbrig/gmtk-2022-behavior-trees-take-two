@@ -5,13 +5,16 @@ namespace Model.AI.BehaviorTrees
 {
     public class BehaviorTree
     {
-        public Status Status = Status.Failure;
+        public Status CurrentStatus = Status.Clean;
         public BehaviorTree(IBehavior rootNode) => _rootNode = rootNode;
-        private IBehavior _rootNode;
+        private readonly IBehavior _rootNode;
+        private List<Behavior> _nodes = new List<Behavior>();
+        private Dictionary<Behavior, List<Behavior>> _adjacencyLists = new Dictionary<Behavior, List<Behavior>>();
+
         public void Run()
         {
             TreeTraversalStarted?.Invoke();
-            Status = _rootNode.Tick();
+            CurrentStatus = _rootNode.Tick();
         }
 
         public event Action TreeTraversalStarted;
