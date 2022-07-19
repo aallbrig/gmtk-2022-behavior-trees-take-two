@@ -1,5 +1,3 @@
-using System;
-
 namespace Model.AI.BehaviorTrees.BuildingBlocks
 {
     public class Conditional: Behavior
