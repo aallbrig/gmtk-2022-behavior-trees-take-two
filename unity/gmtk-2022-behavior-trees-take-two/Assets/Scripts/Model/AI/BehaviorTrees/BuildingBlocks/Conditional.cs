@@ -9,7 +9,8 @@ namespace Model.AI.BehaviorTrees.BuildingBlocks
 
         public override Status Tick()
         {
-            return _context.ConditionalFunction() ? Status.Success : Status.Failure;
+            CurrentStatus = _context.ConditionalFunction() ? Status.Success : Status.Failure;
+            return CurrentStatus;
         }
     }
 }
