@@ -7,12 +7,11 @@ namespace Model.AI.BehaviorTrees
     {
         public event Action<Behavior> ChildAdded;
 
-        protected List<Behavior> Children => _children;
-        private readonly List<Behavior> _children = new List<Behavior>();
+        public List<Behavior> Children { get; } = new List<Behavior>();
 
         public virtual void AddChild(Behavior child)
         {
-            _children.Add(child);
+            Children.Add(child);
             ChildAdded?.Invoke(child);
         }
     }
