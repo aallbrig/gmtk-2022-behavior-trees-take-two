@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Model.Interfaces
 {
     public interface IAgentLocomotionConfiguration

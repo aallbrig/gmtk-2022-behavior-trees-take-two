@@ -28,15 +28,12 @@ namespace MonoBehaviours
 
         public BehaviorTree ProvideBehaviorTree()
         {
-            var hasNoTarget = new Conditional(new ConditionalContext(() => !HasTarget()));
-            // c: enemy within range -> set target
-            var detectEnemy = new Conditional(new ConditionalContext(EnemyWithinRange));
+            var hasNoTarget = new Conditional(new ConditionalContext(HasTarget));
             var moveToTarget = new TaskAction(new TaskActionContext(MoveToTarget));
             // c: have target -> move to target
 
             var seq = new Sequence();
             seq.AddChild(hasNoTarget);
-            seq.AddChild(detectEnemy);
             seq.AddChild(moveToTarget);
 
             var bt = new BehaviorTree(seq);
@@ -66,6 +63,7 @@ namespace MonoBehaviours
 
         private void Update()
         {
+            DetectEnemy(); // TODO: I think a sensory item should be contained in the BT
             Think();
         }
 
@@ -75,10 +73,16 @@ namespace MonoBehaviours
             _agentConfig ??= ScriptableObject.CreateInstance<AgentConfiguration>();
 
             var transformPosition = transform.position;
-            Gizmos.color = _agentGizmoColor;
-            Gizmos.DrawWireSphere(transformPosition, _agentConfig.DetectRange);
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(transformPosition, _agentConfig.AttackRange);
+            if (_target)
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawWireSphere(transformPosition, _agentConfig.AttackRange);
+            }
+            else
+            {
+                Gizmos.color = _agentGizmoColor;
+                Gizmos.DrawWireSphere(transformPosition, _agentConfig.DetectRange);
+            }
         }
         #endif
 
@@ -101,32 +105,32 @@ namespace MonoBehaviours
 
         private void DetectEnemy()
         {
+            if (_target != null)
+            {
+                // make sure target is still within range
+                if (Vector3.Distance(_target.position, transform.position) > _agentConfig.DetectRange)
+                {
+                    _target = null;
+                    TargetLost?.Invoke();
+                }
+            }
+
             var numCollisions = Physics.OverlapSphereNonAlloc(
                 transform.position,
                 _agentConfig.DetectRange,
                 _enemyColliders,
                 1<<_agentConfig.EnemyLayer
             );
+
             if (numCollisions > 0)
                 SetTarget(new Target(_enemyColliders[0].transform)); // TODO: re-evaluate this "pick first" strategy
-            else
-            {
-                _target = null;
-                TargetLost?.Invoke();
-            }
         }
 
         private bool HasTarget() => _target != null;
 
-        private bool EnemyWithinRange()
-        {
-            DetectEnemy();
-            return HasTarget();
-        }
-
         private Status MoveToTarget()
         {
-            if (_target == null)
+            if (HasTarget() == false)
                 return Status.Failure;
             if (Vector3.Distance(_target.position, transform.position) <= _agentConfig.AttackRange)
                 return Status.Success;

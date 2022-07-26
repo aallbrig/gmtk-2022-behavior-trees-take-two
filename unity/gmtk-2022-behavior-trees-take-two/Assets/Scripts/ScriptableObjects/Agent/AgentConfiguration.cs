@@ -7,7 +7,7 @@ namespace ScriptableObjects.Agent
     public class AgentConfiguration : ScriptableObject, IAgentConfiguration
     {
         public string agentConfigurationName = "new agent config";
-        public int enemyLayerNumber = 7;
+        public int enemyLayerNumber = 6;
         public float walkSpeed = 2f;
         public float runSpeed = 5f;
         public float detectRange = 10f;
