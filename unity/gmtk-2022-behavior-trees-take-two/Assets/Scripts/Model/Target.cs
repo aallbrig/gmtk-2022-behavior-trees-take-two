@@ -4,11 +4,11 @@ namespace Model
 {
     public class Target
     {
-        public Transform transform { get; }
+        public Transform Transform { get; }
 
         public Target(Transform targetTransform)
         {
-            transform = targetTransform;
+            Transform = targetTransform;
         }
     }
 }
