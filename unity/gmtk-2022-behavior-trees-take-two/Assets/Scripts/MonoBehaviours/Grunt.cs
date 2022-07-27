@@ -10,12 +10,13 @@ using Random = UnityEngine.Random;
 
 namespace MonoBehaviours
 {
+    [RequireComponent(typeof(NavMeshAgent))]
     public class Grunt : MonoBehaviour, ITrackTargets, IBehaviorTreeProvider
     {
         private static int _maxEnemyColliders = 3;
         public event Action<Target> TargetAcquired;
         public event Action TargetLost;
-        public NavMeshAgent agent;
+        private NavMeshAgent _agent;
 
         private IAgentConfiguration _agentConfig;
         private float _timeOfLastThought;
@@ -45,9 +46,8 @@ namespace MonoBehaviours
         {
             _agentConfig ??= ScriptableObject.CreateInstance<AgentConfiguration>();
 
-            agent ??= GetComponent<NavMeshAgent>();
-            if (agent == null) throw new NullReferenceException();
-            agent.speed = _agentConfig.WalkSpeed;
+            _agent ??= GetComponent<NavMeshAgent>();
+            _agent.speed = _agentConfig.WalkSpeed;
 
             _brain = ProvideBehaviorTree();
             // let the brain think instantly
@@ -107,7 +107,7 @@ namespace MonoBehaviours
         {
             if (_target != null)
             {
-                // make sure target is still within range
+                // make sure target is outside detect range
                 if (Vector3.Distance(_target.position, transform.position) > _agentConfig.DetectRange)
                 {
                     _target = null;
@@ -135,8 +135,11 @@ namespace MonoBehaviours
             if (Vector3.Distance(_target.position, transform.position) <= _agentConfig.AttackRange)
                 return Status.Success;
 
-            agent.SetDestination(_target.position);
-            return Status.Running;
+            if (_agent.isOnNavMesh)
+            {
+                _agent.SetDestination(_target.position);
+                return Status.Running;
+            } else return Status.Failure;
         }
     }
 }
