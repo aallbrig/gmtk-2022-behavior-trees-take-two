@@ -16,7 +16,7 @@ namespace MonoBehaviours
         private static int _maxEnemyColliders = 3;
         public event Action<Target> TargetAcquired;
         public event Action TargetLost;
-        private NavMeshAgent _agent;
+        public NavMeshAgent agent;
 
         private IAgentConfiguration _agentConfig;
         private float _timeOfLastThought;
@@ -46,8 +46,8 @@ namespace MonoBehaviours
         {
             _agentConfig ??= ScriptableObject.CreateInstance<AgentConfiguration>();
 
-            _agent ??= GetComponent<NavMeshAgent>();
-            _agent.speed = _agentConfig.WalkSpeed;
+            agent ??= GetComponent<NavMeshAgent>();
+            agent.speed = _agentConfig.WalkSpeed;
 
             _brain = ProvideBehaviorTree();
             // let the brain think instantly
@@ -135,9 +135,9 @@ namespace MonoBehaviours
             if (Vector3.Distance(_target.position, transform.position) <= _agentConfig.AttackRange)
                 return Status.Success;
 
-            if (_agent.isOnNavMesh)
+            if (agent.isOnNavMesh)
             {
-                _agent.SetDestination(_target.position);
+                agent.SetDestination(_target.position);
                 return Status.Running;
             } else return Status.Failure;
         }
