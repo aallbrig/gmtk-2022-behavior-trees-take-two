@@ -133,7 +133,10 @@ namespace MonoBehaviours
             if (HasTarget() == false)
                 return Status.Failure;
             if (Vector3.Distance(_target.position, transform.position) <= _agentConfig.AttackRange)
+            {
+                agent.SetDestination(transform.position);
                 return Status.Success;
+            }
 
             if (agent.isOnNavMesh)
             {
