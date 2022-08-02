@@ -1,9 +1,10 @@
+using Model.Interfaces;
 using UnityEngine;
 
 namespace MonoBehaviours
 {
-    public class BattleAgent : MonoBehaviour
+    public class BattleAgent : MonoBehaviour, IGameAgent
     {
-        public bool IFF(BattleAgent otherBattleAgent) => false;
+        public GameObject GameObject => gameObject;
     }
 }

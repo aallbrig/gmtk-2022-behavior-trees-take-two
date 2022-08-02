@@ -3,6 +3,7 @@ using Model;
 using Model.AI.BehaviorTrees;
 using Model.AI.BehaviorTrees.BuildingBlocks;
 using Model.Interfaces;
+using MonoBehaviours.BattleSystem;
 using ScriptableObjects.Agent;
 using UnityEngine;
 using UnityEngine.AI;
@@ -13,6 +14,8 @@ namespace MonoBehaviours
     [RequireComponent(typeof(NavMeshAgent))]
     public class Grunt : MonoBehaviour, ITrackTargets, IBehaviorTreeProvider
     {
+        public Targeting targetingSystem;
+
         private static int _maxEnemyColliders = 3;
         public event Action<Target> TargetAcquired;
         public event Action TargetLost;
@@ -44,6 +47,7 @@ namespace MonoBehaviours
 
         private void Start()
         {
+            targetingSystem ??= gameObject.AddComponent<Targeting>();
             _agentConfig ??= ScriptableObject.CreateInstance<AgentConfiguration>();
 
             agent ??= GetComponent<NavMeshAgent>();
@@ -63,7 +67,6 @@ namespace MonoBehaviours
 
         private void Update()
         {
-            DetectEnemy(); // TODO: I think a sensory item should be contained in the BT
             Think();
         }
 
@@ -102,29 +105,6 @@ namespace MonoBehaviours
         }
 
         public event Action<BehaviorTree> BehaviorTreeProvided;
-
-        private void DetectEnemy()
-        {
-            if (_target != null)
-            {
-                // make sure target is outside detect range
-                if (Vector3.Distance(_target.position, transform.position) > _agentConfig.DetectRange)
-                {
-                    _target = null;
-                    TargetLost?.Invoke();
-                }
-            }
-
-            var numCollisions = Physics.OverlapSphereNonAlloc(
-                transform.position,
-                _agentConfig.DetectRange,
-                _enemyColliders,
-                1<<_agentConfig.EnemyLayer
-            );
-
-            if (numCollisions > 0)
-                SetTarget(new Target(_enemyColliders[0].transform)); // TODO: re-evaluate this "pick first" strategy
-        }
 
         private bool HasTarget() => _target != null;
 
