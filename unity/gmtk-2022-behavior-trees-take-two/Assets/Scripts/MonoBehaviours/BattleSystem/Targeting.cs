@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Model.Interfaces;
 using ScriptableObjects;
@@ -46,28 +47,47 @@ namespace MonoBehaviours.BattleSystem
             _rigidbody.useGravity = false;
         }
 
+        private void AcquireNewTarget(BattleAgent battleAgent, List<BattleAgent> currentTrackedTargets)
+        {
+            if (currentTrackedTargets.Contains(battleAgent) == true) return;
+
+            currentTrackedTargets.Add(battleAgent);
+            TargetAcquired?.Invoke(new TargetAcquired(battleAgent, currentTrackedTargets));
+        }
+
+        private void UnacquireTrackedTarget(BattleAgent battleAgent, List<BattleAgent> currentTrackedTargets)
+        {
+            if (currentTrackedTargets.Contains(battleAgent) == false) return;
+    
+            currentTrackedTargets.Remove(battleAgent);
+            TargetLost?.Invoke(new TrackedTargetLost(battleAgent, currentTrackedTargets));
+        }
+
         private void OnTriggerEnter(Collider other)
         {
             if (!other.TryGetComponent<BattleAgent>(out var battleAgent)) return;
-    
-            if (friendlyLayerMask == 1 << other.gameObject.layer)
-                friendlies.Add(battleAgent);
-            if (enemiesLayerMask == 1 << other.gameObject.layer)
-                enemies.Add(battleAgent);
-            if (neutralLayerMask == 1 << other.gameObject.layer)
-                neutrals.Add(battleAgent);
+
+            if (GameObjectInLayerMask(other.gameObject, friendlyLayerMask))
+                AcquireNewTarget(battleAgent, friendlies);
+            if (GameObjectInLayerMask(other.gameObject, enemiesLayerMask))
+                AcquireNewTarget(battleAgent, enemies);
+            if (GameObjectInLayerMask(other.gameObject, neutralLayerMask))
+                AcquireNewTarget(battleAgent, neutrals);
         }
+
+        private static bool GameObjectInLayerMask(GameObject otherGameObject, LayerMask layerMask) =>
+            layerMask == (layerMask | (1 << otherGameObject.layer));
 
         private void OnTriggerExit(Collider other)
         {
             if (!other.TryGetComponent<BattleAgent>(out var battleAgent)) return;
 
-            if (friendlies.Contains(battleAgent) && friendlyLayerMask == 1 << other.gameObject.layer)
-                friendlies.Remove(battleAgent);
-            if (enemies.Contains(battleAgent) &&enemiesLayerMask == 1 << other.gameObject.layer)
-                enemies.Remove(battleAgent);
-            if (neutrals.Contains(battleAgent) && neutralLayerMask == 1 << other.gameObject.layer)
-                neutrals.Remove(battleAgent);
+            if (friendlies.Contains(battleAgent) && GameObjectInLayerMask(other.gameObject, friendlyLayerMask))
+                UnacquireTrackedTarget(battleAgent, friendlies);
+            if (enemies.Contains(battleAgent) && GameObjectInLayerMask(other.gameObject, enemiesLayerMask))
+                UnacquireTrackedTarget(battleAgent, enemies);
+            if (neutrals.Contains(battleAgent) && GameObjectInLayerMask(other.gameObject, neutralLayerMask))
+                UnacquireTrackedTarget(battleAgent, neutrals);
         }
 
         #if UNITY_EDITOR
@@ -75,6 +95,10 @@ namespace MonoBehaviours.BattleSystem
 
         private void OnDrawGizmosSelected() {}
         #endif
+
+        public event Action<TargetAcquired> TargetAcquired;
+
+        public event Action<TrackedTargetLost> TargetLost;
 
         public ITargetingSystemConfiguration Configuration => configuration;
 
