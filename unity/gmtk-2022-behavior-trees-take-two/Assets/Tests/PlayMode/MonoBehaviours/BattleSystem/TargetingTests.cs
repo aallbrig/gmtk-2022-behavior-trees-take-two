@@ -4,6 +4,7 @@ using MonoBehaviours;
 using MonoBehaviours.BattleSystem;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 using UnityEngine.TestTools;
 
 namespace Tests.PlayMode.MonoBehaviours.BattleSystem
@@ -25,11 +26,12 @@ namespace Tests.PlayMode.MonoBehaviours.BattleSystem
             TargetAcquired capture = default;
             var testVolume = NewTestVolume();
             var gameObject = new GameObject { transform = { parent = testVolume } };
-            gameObject.AddComponent<SphereCollider>().radius = 5f;
+            gameObject.AddComponent<SphereCollider>();
             var sut = gameObject.AddComponent<Targeting>();
-            sut.enemiesLayerMask = 13;
-            sut.friendlyLayerMask = 1;
-            sut.neutralLayerMask = 2;
+            sut.enemiesLayerMask = 1<<13;
+            sut.friendlyLayerMask = 1<<1;
+            sut.neutralLayerMask = 1<<2;
+
 
             var testTarget = new GameObject { layer = 13, transform = { parent = testVolume } };
             testTarget.AddComponent<SphereCollider>();
@@ -41,8 +43,10 @@ namespace Tests.PlayMode.MonoBehaviours.BattleSystem
                     capture = targetAcquired;
             };
 
-            yield return new WaitForSeconds(0.1f);
+            yield return null;
+            yield return new FixedUpdate();
 
+            Assert.NotNull(capture);
             Assert.AreEqual(testBattleAgent.ID, capture.NewTrackedTarget.ID);
         }
 
@@ -54,9 +58,9 @@ namespace Tests.PlayMode.MonoBehaviours.BattleSystem
             var gameObject = new GameObject { transform = { parent = testVolume } };
             gameObject.AddComponent<SphereCollider>().radius = 5f;
             var sut = gameObject.AddComponent<Targeting>();
-            sut.enemiesLayerMask = 1;
-            sut.friendlyLayerMask = 14;
-            sut.neutralLayerMask = 2;
+            sut.enemiesLayerMask = 1 << 1;
+            sut.friendlyLayerMask = 1 << 14;
+            sut.neutralLayerMask = 1 << 2;
 
             var testTarget = new GameObject { layer = 14, transform = { parent = testVolume } };
             testTarget.AddComponent<SphereCollider>();
@@ -68,8 +72,10 @@ namespace Tests.PlayMode.MonoBehaviours.BattleSystem
                     capture = targetAcquired;
             };
 
-            yield return new WaitForSeconds(0.1f);
+            yield return null;
+            yield return new FixedUpdate();
 
+            Assert.NotNull(capture);
             Assert.AreEqual(testBattleAgent.ID, capture.NewTrackedTarget.ID);
         }
 
@@ -79,11 +85,11 @@ namespace Tests.PlayMode.MonoBehaviours.BattleSystem
             TargetAcquired capture = default;
             var testVolume = NewTestVolume();
             var gameObject = new GameObject { transform = { parent = testVolume } };
-            gameObject.AddComponent<SphereCollider>().radius = 5f;
+            gameObject.AddComponent<SphereCollider>();
             var sut = gameObject.AddComponent<Targeting>();
-            sut.enemiesLayerMask = 1;
-            sut.friendlyLayerMask = 2;
-            sut.neutralLayerMask = 15;
+            sut.enemiesLayerMask = 1<<1;
+            sut.friendlyLayerMask = 1<<2;
+            sut.neutralLayerMask = 1<<15;
 
             var testTarget = new GameObject { layer = 15, transform = { parent = testVolume } };
             testTarget.AddComponent<SphereCollider>();
@@ -95,8 +101,10 @@ namespace Tests.PlayMode.MonoBehaviours.BattleSystem
                     capture = targetAcquired;
             };
 
-            yield return new WaitForSeconds(0.1f);
+            yield return null;
+            yield return new FixedUpdate();
 
+            Assert.NotNull(capture);
             Assert.AreEqual(testBattleAgent.ID, capture.NewTrackedTarget.ID);
         }
     }

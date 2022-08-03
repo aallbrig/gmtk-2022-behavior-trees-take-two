@@ -24,7 +24,6 @@ namespace MonoBehaviours.BattleSystem
 
         private void Start()
         {
-            EnsureComponentReady();
             ApplyComponentExpectations();
         }
 
@@ -76,7 +75,7 @@ namespace MonoBehaviours.BattleSystem
         }
 
         private static bool GameObjectInLayerMask(GameObject otherGameObject, LayerMask layerMask) =>
-            layerMask == (layerMask | (1 << otherGameObject.layer));
+            layerMask == (layerMask | 1 << otherGameObject.gameObject.layer);
 
         private void OnTriggerExit(Collider other)
         {

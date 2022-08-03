@@ -22,7 +22,7 @@ namespace MonoBehaviours
         public NavMeshAgent agent;
         public AgentConfiguration agentConfiguration;
 
-        private IAgentConfiguration _agentConfig => agentConfiguration;
+        private IAgentConfiguration AgentConfig => agentConfiguration;
         private float _timeOfLastThought;
         private Transform _target;
         private BehaviorTree _brain;
@@ -49,7 +49,25 @@ namespace MonoBehaviours
         private void Start()
         {
             agentConfiguration ??= ScriptableObject.CreateInstance<AgentConfiguration>();
-            targetingSystem ??= gameObject.AddComponent<Targeting>();
+            if (targetingSystem)
+                ConfigureTargetingSystem();
+
+            agent ??= GetComponent<NavMeshAgent>();
+            agent.speed = AgentConfig.WalkSpeed;
+
+            _brain = ProvideBehaviorTree();
+            // let the brain think instantly
+            _timeOfLastThought = Time.time - AgentConfig.ThinkRate;
+            #if UNITY_EDITOR
+            _agentGizmoColor = new Color(
+                Random.Range(0f, 1f),
+                Random.Range(0f, 1f),
+                Random.Range(0f, 1f)
+            );
+            #endif
+        }
+        private void ConfigureTargetingSystem()
+        {
             targetingSystem.enemiesLayerMask = agentConfiguration.enemyLayerMask;
             targetingSystem.friendlyLayerMask = agentConfiguration.friendlyLayerMask;
             targetingSystem.neutralLayerMask = agentConfiguration.neutralLayerMask;
@@ -57,7 +75,7 @@ namespace MonoBehaviours
             {
                 if (Equals(acquired.CurrentTrackedTargets, targetingSystem.enemies) && _target == null)
                 {
-                    _target = acquired.NewTrackedTarget.GameObject.transform;
+                    SetTarget(new Target(acquired.NewTrackedTarget.GameObject.transform));
                 }
             };
             targetingSystem.TargetLost += targetLost =>
@@ -67,22 +85,9 @@ namespace MonoBehaviours
                     && Equals(targetLost.LostTrackedTarget.GameObject.transform, _target))
                 {
                     _target = null;
+                    TargetLost?.Invoke();
                 }
             };
-
-            agent ??= GetComponent<NavMeshAgent>();
-            agent.speed = _agentConfig.WalkSpeed;
-
-            _brain = ProvideBehaviorTree();
-            // let the brain think instantly
-            _timeOfLastThought = Time.time - _agentConfig.ThinkRate;
-            #if UNITY_EDITOR
-            _agentGizmoColor = new Color(
-                Random.Range(0f, 1f),
-                Random.Range(0f, 1f),
-                Random.Range(0f, 1f)
-            );
-            #endif
         }
 
         private void Update()
@@ -106,19 +111,19 @@ namespace MonoBehaviours
             if (_target)
             {
                 Gizmos.color = Color.red;
-                Gizmos.DrawWireSphere(transformPosition, _agentConfig.AttackRange);
+                Gizmos.DrawWireSphere(transformPosition, AgentConfig.AttackRange);
             }
             else
             {
                 Gizmos.color = _agentGizmoColor;
-                Gizmos.DrawWireSphere(transformPosition, _agentConfig.DetectRange);
+                Gizmos.DrawWireSphere(transformPosition, AgentConfig.DetectRange);
             }
         }
         #endif
 
         private void Think()
         {
-            if (Time.time - _timeOfLastThought > _agentConfig.ThinkRate)
+            if (Time.time - _timeOfLastThought > AgentConfig.ThinkRate)
             {
                 _brain.Run();
                 _timeOfLastThought = Time.time;
@@ -139,7 +144,7 @@ namespace MonoBehaviours
         {
             if (HasTarget() == false)
                 return Status.Failure;
-            if (Vector3.Distance(_target.position, transform.position) <= _agentConfig.AttackRange)
+            if (Vector3.Distance(_target.position, transform.position) <= AgentConfig.AttackRange)
             {
                 agent.SetDestination(transform.position);
                 return Status.Success;

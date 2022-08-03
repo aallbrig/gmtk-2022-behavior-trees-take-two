@@ -6,7 +6,7 @@ namespace ScriptableObjects
     [CreateAssetMenu(fileName = "new target system configuration", menuName = "Game/new TargetSystemConfiguration", order = 0)]
     public class TargetSystemConfiguration : ScriptableObject, ITargetingSystemConfiguration
     {
-        public float detectRadius = 1f;
+        public float detectRadius = 5f;
 
         public float DetectRadius => detectRadius;
     }
