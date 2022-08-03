@@ -7,7 +7,9 @@ namespace ScriptableObjects.Agent
     public class AgentConfiguration : ScriptableObject, IAgentConfiguration
     {
         public string agentConfigurationName = "new agent config";
-        public int enemyLayerNumber = 6;
+        public LayerMask enemyLayerMask;
+        public LayerMask friendlyLayerMask;
+        public LayerMask neutralLayerMask;
         public float walkSpeed = 2f;
         public float runSpeed = 5f;
         public float detectRange = 10f;
@@ -20,6 +22,9 @@ namespace ScriptableObjects.Agent
         public float ThinkRate => thinkRateInSeconds;
         public float DetectRange => detectRange;
         public float AttackRange => attackRange;
-        public int EnemyLayer => enemyLayerNumber;
+
+        public LayerMask EnemyLayerMask => enemyLayerMask;
+        public LayerMask FriendlyLayerMask => friendlyLayerMask;
+        public LayerMask NeutralsLayerMask => neutralLayerMask;
     }
 }

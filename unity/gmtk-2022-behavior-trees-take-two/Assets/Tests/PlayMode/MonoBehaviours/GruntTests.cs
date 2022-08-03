@@ -49,7 +49,7 @@ namespace Tests.PlayMode.MonoBehaviours
             var testTarget = new GameObject
             {
                 transform = { position = sut.transform.position + new Vector3(0, 0, referenceAgentConfig.DetectRange - 1) },
-                layer = referenceAgentConfig.EnemyLayer
+                layer = referenceAgentConfig.EnemyLayerMask
             };
             testTarget.AddComponent<SphereCollider>();
             yield return null;
@@ -68,7 +68,7 @@ namespace Tests.PlayMode.MonoBehaviours
             var testTarget = new GameObject
             {
                 transform = { position = sut.transform.position + new Vector3(0, 0, referenceAgentConfig.DetectRange - 1) },
-                layer = referenceAgentConfig.EnemyLayer
+                layer = referenceAgentConfig.EnemyLayerMask
             };
             testTarget.AddComponent<SphereCollider>();
             yield return null;

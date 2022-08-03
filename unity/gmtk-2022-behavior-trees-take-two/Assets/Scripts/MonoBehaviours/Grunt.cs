@@ -50,6 +50,9 @@ namespace MonoBehaviours
         {
             agentConfiguration ??= ScriptableObject.CreateInstance<AgentConfiguration>();
             targetingSystem ??= gameObject.AddComponent<Targeting>();
+            targetingSystem.enemiesLayerMask = agentConfiguration.enemyLayerMask;
+            targetingSystem.friendlyLayerMask = agentConfiguration.friendlyLayerMask;
+            targetingSystem.neutralLayerMask = agentConfiguration.neutralLayerMask;
             targetingSystem.TargetAcquired += acquired =>
             {
                 if (Equals(acquired.CurrentTrackedTargets, targetingSystem.enemies) && _target == null)

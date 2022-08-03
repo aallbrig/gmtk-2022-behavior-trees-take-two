@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace Model.Interfaces
 {
     public interface IAgentLocomotionConfiguration
@@ -10,7 +12,9 @@ namespace Model.Interfaces
     {
         public float DetectRange { get; }
         public float AttackRange { get; }
-        public int EnemyLayer { get; }
+        public LayerMask EnemyLayerMask { get; }
+        public LayerMask FriendlyLayerMask { get; }
+        public LayerMask NeutralsLayerMask { get; }
     }
 
     public interface IAgentConfiguration : IAgentLocomotionConfiguration, IAgentCombatConfiguration

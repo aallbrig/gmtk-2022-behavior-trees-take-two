@@ -12,10 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59b842e303b84038bab0f3aa9bb04bea, type: 3}
   m_Name: Grunt Agent Config
   m_EditorClassIdentifier: 
-  agentConfigurationName: new agent config
-  enemyLayerNumber: 6
+  agentConfigurationName: Grunt Agent Config
+  enemyLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
+  friendlyLayerMask:
+    serializedVersion: 2
+    m_Bits: 128
+  neutralLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
   walkSpeed: 2
   runSpeed: 5
-  detectRange: 8
-  attackRange: 1.2
+  detectRange: 6
+  attackRange: 2.2
   thinkRateInSeconds: 1
