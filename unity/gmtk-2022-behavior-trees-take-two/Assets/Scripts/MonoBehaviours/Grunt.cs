@@ -32,12 +32,12 @@ namespace MonoBehaviours
 
         public BehaviorTree ProvideBehaviorTree()
         {
-            var hasNoTarget = new Conditional(new ConditionalContext(HasTarget));
+            var hasTarget = new Conditional(new ConditionalContext(HasTarget));
             var moveToTarget = new TaskAction(new TaskActionContext(MoveToTarget));
             // c: have target -> move to target
 
             var seq = new Sequence();
-            seq.AddChild(hasNoTarget);
+            seq.AddChild(hasTarget);
             seq.AddChild(moveToTarget);
 
             var bt = new BehaviorTree(seq);
@@ -47,8 +47,8 @@ namespace MonoBehaviours
 
         private void Start()
         {
-            targetingSystem ??= gameObject.AddComponent<Targeting>();
             _agentConfig ??= ScriptableObject.CreateInstance<AgentConfiguration>();
+            targetingSystem ??= gameObject.AddComponent<Targeting>();
 
             agent ??= GetComponent<NavMeshAgent>();
             agent.speed = _agentConfig.WalkSpeed;
@@ -67,6 +67,11 @@ namespace MonoBehaviours
 
         private void Update()
         {
+            if (_target == null && targetingSystem.enemies.Count > 0)
+                _target = targetingSystem.enemies[0].transform;
+            else if (_target && targetingSystem.enemies.Count == 0)
+                _target = null;
+
             Think();
         }
 

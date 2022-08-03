@@ -396,6 +396,7 @@ GameObject:
   - component: {fileID: 39028155093238940}
   - component: {fileID: 8802101499950462352}
   - component: {fileID: 752961172572788411}
+  - component: {fileID: 1438179453}
   m_Layer: 6
   m_Name: Master Chief (Player)
   m_TagString: Untagged
@@ -468,6 +469,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetingSystem: {fileID: 2580050219699035601}
+--- !u!114 &1438179453
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3128410687428570384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1125600c67742f4808565e572b6cf3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4148196232797446091
 GameObject:
   m_ObjectHideFlags: 0

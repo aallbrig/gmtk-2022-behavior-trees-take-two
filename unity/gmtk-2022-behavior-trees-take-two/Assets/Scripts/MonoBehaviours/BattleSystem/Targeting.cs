@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Model.Interfaces;
 using ScriptableObjects;
@@ -27,6 +26,7 @@ namespace MonoBehaviours.BattleSystem
             EnsureComponentReady();
             ApplyComponentExpectations();
         }
+
         private void EnsureComponentReady()
         {
             configuration ??= ScriptableObject.CreateInstance<TargetSystemConfiguration>();
@@ -42,9 +42,7 @@ namespace MonoBehaviours.BattleSystem
 
             _collider.isTrigger = true;
             if (_collider is SphereCollider sphereCollider)
-            {
                 sphereCollider.radius = Configuration.DetectRadius;
-            }
             _rigidbody.useGravity = false;
         }
 
@@ -73,15 +71,9 @@ namespace MonoBehaviours.BattleSystem
         }
 
         #if UNITY_EDITOR
-        private void OnDrawGizmos()
-        {
-            
-        }
+        private void OnDrawGizmos() {}
 
-        private void OnDrawGizmosSelected()
-        {
-            
-        }
+        private void OnDrawGizmosSelected() {}
         #endif
 
         public ITargetingSystemConfiguration Configuration => configuration;
