@@ -20,8 +20,9 @@ namespace MonoBehaviours
         public event Action<Target> TargetAcquired;
         public event Action TargetLost;
         public NavMeshAgent agent;
+        public AgentConfiguration agentConfiguration;
 
-        private IAgentConfiguration _agentConfig;
+        private IAgentConfiguration _agentConfig => agentConfiguration;
         private float _timeOfLastThought;
         private Transform _target;
         private BehaviorTree _brain;
@@ -47,8 +48,24 @@ namespace MonoBehaviours
 
         private void Start()
         {
-            _agentConfig ??= ScriptableObject.CreateInstance<AgentConfiguration>();
+            agentConfiguration ??= ScriptableObject.CreateInstance<AgentConfiguration>();
             targetingSystem ??= gameObject.AddComponent<Targeting>();
+            targetingSystem.TargetAcquired += acquired =>
+            {
+                if (Equals(acquired.CurrentTrackedTargets, targetingSystem.enemies) && _target == null)
+                {
+                    _target = acquired.NewTrackedTarget.GameObject.transform;
+                }
+            };
+            targetingSystem.TargetLost += targetLost =>
+            {
+                if (
+                    Equals(targetLost.CurrentTrackedTargets, targetingSystem.enemies)
+                    && Equals(targetLost.LostTrackedTarget.GameObject.transform, _target))
+                {
+                    _target = null;
+                }
+            };
 
             agent ??= GetComponent<NavMeshAgent>();
             agent.speed = _agentConfig.WalkSpeed;
@@ -67,18 +84,20 @@ namespace MonoBehaviours
 
         private void Update()
         {
-            if (_target == null && targetingSystem.enemies.Count > 0)
-                _target = targetingSystem.enemies[0].transform;
-            else if (_target && targetingSystem.enemies.Count == 0)
-                _target = null;
-
             Think();
         }
 
         #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
-            _agentConfig ??= ScriptableObject.CreateInstance<AgentConfiguration>();
+            agentConfiguration ??= ScriptableObject.CreateInstance<AgentConfiguration>();
+            if (_agentGizmoColor == default) {
+                _agentGizmoColor = new Color(
+                    Random.Range(0f, 1f),
+                    Random.Range(0f, 1f),
+                    Random.Range(0f, 1f)
+                );
+            }
 
             var transformPosition = transform.position;
             if (_target)
