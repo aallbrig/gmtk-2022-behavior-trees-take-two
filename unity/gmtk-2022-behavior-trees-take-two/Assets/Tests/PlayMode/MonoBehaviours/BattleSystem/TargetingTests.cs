@@ -44,7 +44,7 @@ namespace Tests.PlayMode.MonoBehaviours.BattleSystem
             };
 
             yield return null;
-            yield return new WaitForFixedUpdate();
+            yield return null;
 
             Assert.NotNull(capture);
             Assert.AreEqual(testBattleAgent.ID, capture.NewTrackedTarget.ID);
@@ -73,7 +73,7 @@ namespace Tests.PlayMode.MonoBehaviours.BattleSystem
             };
 
             yield return null;
-            yield return new WaitForFixedUpdate();
+            yield return null;
 
             Assert.NotNull(capture);
             Assert.AreEqual(testBattleAgent.ID, capture.NewTrackedTarget.ID);
@@ -102,7 +102,7 @@ namespace Tests.PlayMode.MonoBehaviours.BattleSystem
             };
 
             yield return null;
-            yield return new WaitForEndOfFrame();
+            yield return null;
 
             Assert.NotNull(capture);
             Assert.AreEqual(testBattleAgent.ID, capture.NewTrackedTarget.ID);

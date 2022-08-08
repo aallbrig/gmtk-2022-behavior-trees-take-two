@@ -10,6 +10,7 @@ namespace MonoBehaviours.BattleSystem
     [RequireComponent(typeof(Rigidbody))]
     public class Targeting : MonoBehaviour, ITargetSystem
     {
+        public BattleAgent self;
         public LayerMask friendlyLayerMask;
         public LayerMask enemiesLayerMask;
         public LayerMask neutralLayerMask;
@@ -54,7 +55,7 @@ namespace MonoBehaviours.BattleSystem
             TargetAcquired?.Invoke(new TargetAcquired(battleAgent, currentTrackedTargets));
         }
 
-        private void UnacquireTrackedTarget(BattleAgent battleAgent, List<BattleAgent> currentTrackedTargets)
+        private void LoseTrackedTarget(BattleAgent battleAgent, List<BattleAgent> currentTrackedTargets)
         {
             if (currentTrackedTargets.Contains(battleAgent) == false) return;
     
@@ -65,6 +66,7 @@ namespace MonoBehaviours.BattleSystem
         private void OnTriggerEnter(Collider other)
         {
             if (!other.TryGetComponent<BattleAgent>(out var battleAgent)) return;
+            if (battleAgent == self) return;
 
             if (GameObjectInLayerMask(other.gameObject, friendlyLayerMask))
                 AcquireNewTarget(battleAgent, friendlies);
@@ -82,17 +84,32 @@ namespace MonoBehaviours.BattleSystem
             if (!other.TryGetComponent<BattleAgent>(out var battleAgent)) return;
 
             if (friendlies.Contains(battleAgent) && GameObjectInLayerMask(other.gameObject, friendlyLayerMask))
-                UnacquireTrackedTarget(battleAgent, friendlies);
+                LoseTrackedTarget(battleAgent, friendlies);
             if (enemies.Contains(battleAgent) && GameObjectInLayerMask(other.gameObject, enemiesLayerMask))
-                UnacquireTrackedTarget(battleAgent, enemies);
+                LoseTrackedTarget(battleAgent, enemies);
             if (neutrals.Contains(battleAgent) && GameObjectInLayerMask(other.gameObject, neutralLayerMask))
-                UnacquireTrackedTarget(battleAgent, neutrals);
+                LoseTrackedTarget(battleAgent, neutrals);
         }
 
         #if UNITY_EDITOR
         private void OnDrawGizmos() {}
 
-        private void OnDrawGizmosSelected() {}
+        private void OnDrawGizmosSelected()
+        {
+            VisualizeAwarenessOf(friendlies, Color.green);
+            VisualizeAwarenessOf(enemies, Color.red);
+            VisualizeAwarenessOf(neutrals, Color.cyan);
+        }
+        private void VisualizeAwarenessOf(List<BattleAgent> battleAgents, Color color)
+        {
+            foreach (var battleAgent in battleAgents)
+            {
+                Gizmos.color = color;
+                // draw visualization above game object
+                var vizPosition = battleAgent.GameObject.transform.position + (Vector3.up * 2);
+                Gizmos.DrawSphere(vizPosition, 0.25f);
+            }
+        }
         #endif
 
         public event Action<TargetAcquired> TargetAcquired;
