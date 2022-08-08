@@ -7,11 +7,9 @@ namespace Model.AI.BehaviorTrees
     {
         public event Action<Behavior> ChildAdded;
 
-        public List<Behavior> Children { get; } = new List<Behavior>();
-
         public virtual void AddChild(Behavior child)
         {
-            Children.Add(child);
+            children.Add(child);
             ChildAdded?.Invoke(child);
         }
     }

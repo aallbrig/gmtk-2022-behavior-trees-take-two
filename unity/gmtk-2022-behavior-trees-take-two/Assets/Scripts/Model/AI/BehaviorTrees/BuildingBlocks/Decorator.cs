@@ -8,7 +8,6 @@ namespace Model.AI.BehaviorTrees.BuildingBlocks
         public event Action<IBehavior> ChildSet;
 
         private readonly IDecoratorContext _ctx;
-        private IBehavior _child;
 
         public Decorator(IDecoratorContext ctx, IBehavior behavior)
         {
@@ -18,13 +17,13 @@ namespace Model.AI.BehaviorTrees.BuildingBlocks
 
         public void SetOnlyChild(IBehavior behavior)
         {
-            _child = behavior;
+            children[0] = behavior;
             ChildSet?.Invoke(behavior);
         }
 
         public override Status Tick()
         {
-            return _ctx.RunOperation(_child);
+            return _ctx.RunOperation(children[0]);
         }
     }
 }

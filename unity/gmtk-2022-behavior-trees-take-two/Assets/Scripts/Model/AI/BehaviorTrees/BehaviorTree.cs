@@ -39,15 +39,20 @@ namespace Model.AI.BehaviorTrees
             while (_treeTraversalQueue.Count > 0)
             {
                 var b = _treeTraversalQueue.Dequeue();
-                _nodes.Add(b);
-                _adjacencyLists[b] = new List<IBehavior>();
-                // add children to queue
+                if (_nodes.Contains(b) == false) _nodes.Add(b);
+                if (_adjacencyLists.ContainsKey(b) == false) _adjacencyLists[b] = new List<IBehavior>();
+
+                foreach (var child in b.Children)
+                {
+                    _adjacencyLists[b].Add(child);
+                    _treeTraversalQueue.Enqueue(child);
+                }
             }
         }
 
         private readonly Decorator _rootNode;
         private readonly List<IBehavior> _nodes = new List<IBehavior>();
-        private Dictionary<IBehavior, List<IBehavior>> _adjacencyLists = new Dictionary<IBehavior, List<IBehavior>>();
+        private readonly Dictionary<IBehavior, List<IBehavior>> _adjacencyLists = new Dictionary<IBehavior, List<IBehavior>>();
         private readonly Queue<IBehavior> _treeTraversalQueue = new Queue<IBehavior>();
 
         public void Run()
