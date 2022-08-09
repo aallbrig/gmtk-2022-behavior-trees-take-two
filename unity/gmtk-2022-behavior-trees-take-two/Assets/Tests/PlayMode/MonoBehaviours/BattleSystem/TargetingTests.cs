@@ -11,6 +11,7 @@ namespace Tests.PlayMode.MonoBehaviours.BattleSystem
 {
     public class TargetingTests
     {
+        private GameObject _testGameObject;
         private readonly Vector3 _testLocation = new Vector3(30f, 30f, 30f);
         private readonly Vector3 _volumeOffset = new Vector3(0, 0, 30f);
         private int _testVolumeIndex = 0;

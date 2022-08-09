@@ -5,7 +5,7 @@ namespace Model.AI.BehaviorTrees.BuildingBlocks
 
     public class Decorator: Composite, IDecorator
     {
-        public event Action<IBehavior> ChildSet;
+        public event Action<IBehavior> SingleChildBehaviorSet;
 
         private readonly IDecoratorContext _ctx;
 
@@ -17,8 +17,10 @@ namespace Model.AI.BehaviorTrees.BuildingBlocks
 
         public void SetOnlyChild(IBehavior behavior)
         {
-            children[0] = behavior;
-            ChildSet?.Invoke(behavior);
+            if (children.Count == 0) children.Add(behavior);
+            else children[0] = behavior;
+
+            SingleChildBehaviorSet?.Invoke(behavior);
         }
 
         public override Status Tick()
