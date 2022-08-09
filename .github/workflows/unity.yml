@@ -28,6 +28,10 @@ jobs:
         with:
           lfs: true
 
+      - name: install third party dependencies
+        run: ./scripts/install-components-from-github.sh
+        shell: bash
+
       - uses: actions/cache@v2
         with:
           path: ${{ matrix.projectPath }}/Library
