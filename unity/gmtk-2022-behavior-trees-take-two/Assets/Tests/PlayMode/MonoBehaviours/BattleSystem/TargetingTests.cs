@@ -1,40 +1,39 @@
 using System.Collections;
+using System.Collections.Generic;
 using Model.Interfaces;
 using MonoBehaviours;
 using MonoBehaviours.BattleSystem;
 using NUnit.Framework;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 using UnityEngine.TestTools;
 
 namespace Tests.PlayMode.MonoBehaviours.BattleSystem
 {
     public class TargetingTests
     {
-        private GameObject _testGameObject;
-        private readonly Vector3 _testLocation = new Vector3(30f, 30f, 30f);
-        private readonly Vector3 _volumeOffset = new Vector3(0, 0, 30f);
-        private int _testVolumeIndex = 0;
+        private readonly List<GameObject> _destroyAtEndOfTest = new List<GameObject>();
 
-        private Transform NewTestVolume()
+        [TearDown]
+        public void Teardown()
         {
-            return new GameObject { transform = { position = _testLocation + (_volumeOffset * _testVolumeIndex++) } }.transform;
+            foreach (var gameObject in _destroyAtEndOfTest)
+                Object.Destroy(gameObject);
         }
 
         [UnityTest]
         public IEnumerator TargetingCanAcquireEnemies()
         {
             TargetAcquired capture = default;
-            var testVolume = NewTestVolume();
-            var gameObject = new GameObject { transform = { parent = testVolume } };
+            var gameObject = new GameObject();
+            _destroyAtEndOfTest.Add(gameObject);
             gameObject.AddComponent<SphereCollider>();
             var sut = gameObject.AddComponent<Targeting>();
             sut.enemiesLayerMask = 1<<13;
             sut.friendlyLayerMask = 1<<1;
             sut.neutralLayerMask = 1<<2;
 
-
-            var testTarget = new GameObject { layer = 13, transform = { parent = testVolume } };
+            var testTarget = new GameObject { layer = 13 };
+            _destroyAtEndOfTest.Add(testTarget);
             testTarget.AddComponent<SphereCollider>();
             var testBattleAgent = testTarget.AddComponent<BattleAgent>();
 
@@ -55,15 +54,16 @@ namespace Tests.PlayMode.MonoBehaviours.BattleSystem
         public IEnumerator TargetingCanAcquireFriendlies()
         {
             TargetAcquired capture = default;
-            var testVolume = NewTestVolume();
-            var gameObject = new GameObject { transform = { parent = testVolume } };
+            var gameObject = new GameObject();
+            _destroyAtEndOfTest.Add(gameObject);
             gameObject.AddComponent<SphereCollider>().radius = 5f;
             var sut = gameObject.AddComponent<Targeting>();
             sut.enemiesLayerMask = 1 << 1;
             sut.friendlyLayerMask = 1 << 14;
             sut.neutralLayerMask = 1 << 2;
 
-            var testTarget = new GameObject { layer = 14, transform = { parent = testVolume } };
+            var testTarget = new GameObject { layer = 14 };
+            _destroyAtEndOfTest.Add(testTarget);
             testTarget.AddComponent<SphereCollider>();
             var testBattleAgent = testTarget.AddComponent<BattleAgent>();
 
@@ -84,15 +84,16 @@ namespace Tests.PlayMode.MonoBehaviours.BattleSystem
         public IEnumerator TargetingCanAcquireNeutrals()
         {
             TargetAcquired capture = default;
-            var testVolume = NewTestVolume();
-            var gameObject = new GameObject { transform = { parent = testVolume } };
+            var gameObject = new GameObject();
+            _destroyAtEndOfTest.Add(gameObject);
             gameObject.AddComponent<SphereCollider>();
             var sut = gameObject.AddComponent<Targeting>();
             sut.enemiesLayerMask = 1<<1;
             sut.friendlyLayerMask = 1<<2;
             sut.neutralLayerMask = 1<<15;
 
-            var testTarget = new GameObject { layer = 15, transform = { parent = testVolume } };
+            var testTarget = new GameObject { layer = 15 };
+            _destroyAtEndOfTest.Add(testTarget);
             testTarget.AddComponent<SphereCollider>();
             var testBattleAgent = testTarget.AddComponent<BattleAgent>();
 
