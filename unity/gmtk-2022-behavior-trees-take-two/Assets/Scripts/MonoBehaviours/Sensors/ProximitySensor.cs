@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Model.Interfaces.Sensors;
+using ScriptableObjects;
 using UnityEngine;
 
 namespace MonoBehaviours.Sensors
@@ -8,23 +9,42 @@ namespace MonoBehaviours.Sensors
     [RequireComponent(typeof(Collider))]
     public class ProximitySensor : MonoBehaviour, IProximitySensor
     {
-        public IProximitySensorConfiguration Configuration;
-        private Collider _collider;
+        public event Action<GameObject> EnemySensed;
+        public event Action<GameObject> EnemySenseLost;
 
-        [SerializeField] public List<GameObject> Friendlies { get; } = new List<GameObject>();
-        [SerializeField] public List<GameObject> Enemies { get; } = new List<GameObject>();
-        [SerializeField] public List<GameObject> CoverPoints { get; } = new List<GameObject>();
+        public IProximitySensorConfiguration Configuration;
+        public ProximitySensorConfiguration sensorConfig;
+        [SerializeField] private Collider sensorTrigger;
+        [SerializeField] private List<GameObject> friendlies = new List<GameObject>();
+        [SerializeField] private List<GameObject> enemies = new List<GameObject>();
+        [SerializeField] private List<GameObject> cover = new List<GameObject>();
+
+        public List<GameObject> Friendlies => friendlies;
+        public List<GameObject> Enemies => enemies;
+        public List<GameObject> CoverPoints => cover;
 
         private void Start()
         {
-            _collider = GetComponent<Collider>();
+            sensorTrigger ??= GetComponent<Collider>();
+            sensorTrigger ??= GetComponent<SphereCollider>();
+            if (Configuration == null)
+            {
+                sensorConfig ??= ScriptableObject.CreateInstance<ProximitySensorConfiguration>();
+                Configuration = sensorConfig;
+            }
+
             ConfigureCollider();
+        }
+
+        private void Update()
+        {
+            Sense();
         }
 
         private void ConfigureCollider()
         {
-            _collider.isTrigger = true;
-            if (_collider is SphereCollider sphereCollider)
+            sensorTrigger.isTrigger = true;
+            if (sensorTrigger is SphereCollider sphereCollider)
             {
                 sphereCollider.radius = Configuration.Range / 2;
             }
@@ -42,7 +62,7 @@ namespace MonoBehaviours.Sensors
             CoverPoints.Clear();
 
             foreach (var otherCollider in Physics.OverlapSphere(gameObject.transform.position, Configuration.Range, Configuration.CoverLayerMask))
-                if (otherCollider != _collider) CoverPoints.Add(otherCollider.gameObject);
+                if (otherCollider != sensorTrigger && !CoverPoints.Contains(otherCollider.gameObject)) CoverPoints.Add(otherCollider.gameObject);
         }
 
         public void SenseForEnemies()
@@ -50,7 +70,11 @@ namespace MonoBehaviours.Sensors
             Enemies.Clear();
 
             foreach (var otherCollider in Physics.OverlapSphere(gameObject.transform.position, Configuration.Range, Configuration.EnemyLayerMask))
-                if (otherCollider != _collider) Enemies.Add(otherCollider.gameObject);
+                if (otherCollider != sensorTrigger && !Enemies.Contains(otherCollider.gameObject))
+                {
+                    Enemies.Add(otherCollider.gameObject);
+                    EnemySensed?.Invoke(otherCollider.gameObject);
+                }
         }
 
         public void SenseForFriendlies()
@@ -58,7 +82,7 @@ namespace MonoBehaviours.Sensors
             Friendlies.Clear();
 
             foreach (var otherCollider in Physics.OverlapSphere(gameObject.transform.position, Configuration.Range, Configuration.FriendlyLayerMask))
-                if (otherCollider != _collider) Friendlies.Add(otherCollider.gameObject);
+                if (otherCollider != sensorTrigger && !Friendlies.Contains(otherCollider.gameObject)) Friendlies.Add(otherCollider.gameObject);
         }
     }
 }

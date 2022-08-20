@@ -3,7 +3,7 @@ using Model;
 using Model.AI.BehaviorTrees;
 using Model.AI.BehaviorTrees.BuildingBlocks;
 using Model.Interfaces;
-using MonoBehaviours.BattleSystem;
+using MonoBehaviours.Sensors;
 using ScriptableObjects.Agent;
 using UnityEngine;
 using UnityEngine.AI;
@@ -14,7 +14,7 @@ namespace MonoBehaviours
     [RequireComponent(typeof(NavMeshAgent))]
     public class Grunt : MonoBehaviour, ITrackTargets, IBehaviorTreeProvider
     {
-        public Targeting targetingSystem;
+        public ProximitySensor proximitySensor;
 
         private static int _maxEnemyColliders = 3;
         public event Action<Target> TargetAcquired;
@@ -49,7 +49,7 @@ namespace MonoBehaviours
         private void Start()
         {
             agentConfiguration ??= ScriptableObject.CreateInstance<AgentConfiguration>();
-            if (targetingSystem)
+            if (proximitySensor)
                 ConfigureTargetingSystem();
 
             agent ??= GetComponent<NavMeshAgent>();
@@ -66,23 +66,16 @@ namespace MonoBehaviours
             );
             #endif
         }
+
         private void ConfigureTargetingSystem()
         {
-            targetingSystem.enemiesLayerMask = agentConfiguration.enemyLayerMask;
-            targetingSystem.friendlyLayerMask = agentConfiguration.friendlyLayerMask;
-            targetingSystem.neutralLayerMask = agentConfiguration.neutralLayerMask;
-            targetingSystem.TargetAcquired += acquired =>
+            proximitySensor.EnemySensed += acquired =>
             {
-                if (Equals(acquired.CurrentTrackedTargets, targetingSystem.enemies) && _target == null)
-                {
-                    SetTarget(new Target(acquired.NewTrackedTarget.GameObject.transform));
-                }
+                if (_target == null) SetTarget(new Target(acquired.transform));
             };
-            targetingSystem.TargetLost += targetLost =>
+            proximitySensor.EnemySenseLost += targetLost =>
             {
-                if (
-                    Equals(targetLost.CurrentTrackedTargets, targetingSystem.enemies)
-                    && Equals(targetLost.LostTrackedTarget.GameObject.transform, _target))
+                if (_target == targetLost.transform)
                 {
                     _target = null;
                     TargetLost?.Invoke();
