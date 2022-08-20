@@ -26,7 +26,6 @@ namespace MonoBehaviours
         private float _timeOfLastThought;
         private Transform _target;
         private BehaviorTree _brain;
-        private readonly Collider[] _enemyColliders = new Collider[_maxEnemyColliders];
         #if UNITY_EDITOR
         private Color _agentGizmoColor;
         #endif
