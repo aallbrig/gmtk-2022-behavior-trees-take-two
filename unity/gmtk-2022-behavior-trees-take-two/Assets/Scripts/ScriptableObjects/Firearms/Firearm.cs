@@ -7,7 +7,7 @@ using UnityEngine;
 namespace ScriptableObjects.Firearms
 {
     [CreateAssetMenu(fileName = "New Firearm", menuName = "Game/Firearms/New firearm", order = 0)]
-    public class Firearm : ScriptableObject, IFirearm, IControlButton, IWeapon
+    public class Firearm : ScriptableObject, IFirearm, IControlButton
     {
         public event Action FirearmSelected;
         public event Action<IAmmo> FirearmFired;

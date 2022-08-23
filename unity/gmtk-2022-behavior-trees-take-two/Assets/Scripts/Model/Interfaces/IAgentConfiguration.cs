@@ -11,7 +11,6 @@ namespace Model.Interfaces
     public interface IAgentCombatConfiguration
     {
         public float DetectRange { get; }
-        public float AttackRange { get; }
         public LayerMask EnemyLayerMask { get; }
         public LayerMask FriendlyLayerMask { get; }
         public LayerMask NeutralsLayerMask { get; }

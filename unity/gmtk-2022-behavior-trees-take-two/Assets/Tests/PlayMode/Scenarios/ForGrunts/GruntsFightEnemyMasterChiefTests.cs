@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Model.Interfaces;
 using Model.Interfaces.BattleSystem;
 using MonoBehaviours;
 using NSubstitute;
@@ -63,15 +64,14 @@ namespace Tests.PlayMode.Scenarios.ForGrunts
             Assert.AreEqual(testMasterChief.transform, acquiredTargetCapture);
         }
 
-        // TODO
-        // [UnityTest]
+        [UnityTest]
         public IEnumerator GruntMovesCloseToMasterChief_IfOutsideEffectiveWeaponRange()
         {
             var sut = _sutPrefabInstance;
             var testMasterChief = _testMasterChiefInstance;
             var weaponUser = sut.GetComponent<IWeaponsUser>();
-            weaponUser.Weapon = Substitute.For<IWeapon>();
-            weaponUser.Weapon.EffectiveRange.Returns(4f);
+            weaponUser.Weapon = Substitute.For<IFirearm>();
+            weaponUser.Weapon.EffectiveRange.Returns(1f);
             var movingToMasterChief = false;
             var grunt = _sutPrefabInstance.GetComponent<Grunt>();
             grunt.MovingCloserToTarget += () => movingToMasterChief = true;
@@ -79,6 +79,7 @@ namespace Tests.PlayMode.Scenarios.ForGrunts
             // A grunt move towards master chief
             sut.transform.position = Vector3.zero;
             testMasterChief.transform.position = sut.transform.position + Vector3.forward * (weaponUser.Weapon.EffectiveRange + 1);
+            yield return null;
             yield return null;
 
             Assert.IsTrue(movingToMasterChief);

@@ -108,18 +108,12 @@ namespace MonoBehaviours
                     Random.Range(0f, 1f)
                 );
             }
-
             var transformPosition = transform.position;
-            if (_target)
-            {
-                Gizmos.color = Color.red;
-                Gizmos.DrawWireSphere(transformPosition, AgentConfig.AttackRange);
-            }
             Gizmos.color = _agentGizmoColor;
             Gizmos.DrawWireSphere(transformPosition, AgentConfig.DetectRange);
             if (WeaponsUser != default && WeaponsUser.Weapon != default)
             {
-                Gizmos.color = Color.green;
+                Gizmos.color = Color.red;
                 Gizmos.DrawWireSphere(transformPosition, WeaponsUser.Weapon.EffectiveRange);
             }
         }
@@ -127,11 +121,12 @@ namespace MonoBehaviours
 
         private void Think()
         {
-            if (Time.time - _timeOfLastThought > AgentConfig.ThinkRate)
-            {
-                _brain.Run();
-                _timeOfLastThought = Time.time;
-            }
+            _brain.Run();
+            // if (Time.time - _timeOfLastThought > AgentConfig.ThinkRate)
+            //{
+            //    _brain.Run();
+            //    _timeOfLastThought = Time.time;
+            //}
         }
 
         public void SetTarget(Target target)
@@ -151,16 +146,18 @@ namespace MonoBehaviours
             var distanceToTarget = Vector3.Distance(_target.position, transform.position);
             if (distanceToTarget >= AgentConfig.DetectRange)
             {
+                agent.SetDestination(transform.position);
                 return Status.Failure;
             }
             if (WeaponsUser.Weapon != default && distanceToTarget > WeaponsUser.Weapon.EffectiveRange)
             {
                 MovingCloserToTarget?.Invoke();
-                agent.SetDestination(transform.position);
+                agent.SetDestination(_target.position);
                 return Status.Running;
             }
             if (WeaponsUser.Weapon != default && distanceToTarget <= WeaponsUser.Weapon.EffectiveRange)
             {
+                agent.SetDestination(transform.position);
                 return Status.Success;
             }
             return Status.Failure;

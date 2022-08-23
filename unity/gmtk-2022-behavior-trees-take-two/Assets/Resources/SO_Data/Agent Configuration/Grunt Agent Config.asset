@@ -24,6 +24,6 @@ MonoBehaviour:
     m_Bits: 0
   walkSpeed: 2
   runSpeed: 5
-  detectRange: 6
+  detectRange: 8
   attackRange: 2.2
   thinkRateInSeconds: 1

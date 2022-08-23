@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   firearmName: Pistol
   fireRatePerSecond: 2
-  effectiveRange: 2
+  effectiveRange: 3
   ammo: {fileID: 11400000, guid: cb3ae5076d39c47a18eae98a201697af, type: 2}

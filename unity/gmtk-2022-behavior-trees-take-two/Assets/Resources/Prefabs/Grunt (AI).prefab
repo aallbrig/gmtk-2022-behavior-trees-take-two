@@ -1,5 +1,80 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &428727798133824313
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6540396712384995659}
+  m_Layer: 7
+  m_Name: sensors
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6540396712384995659
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 428727798133824313}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 3115231259549807625}
+  m_Father: {fileID: 662615561713763333}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1395769841173700007
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3115231259549807625}
+  - component: {fileID: 1548377619761426369}
+  m_Layer: 7
+  m_Name: proximity sensor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3115231259549807625
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1395769841173700007}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 6540396712384995659}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &1548377619761426369
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1395769841173700007}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 2.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5409118776170786588
 GameObject:
   m_ObjectHideFlags: 0
@@ -9,10 +84,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 662615561713763333}
-  - component: {fileID: 8727358683044321721}
-  - component: {fileID: 4291760199487678321}
-  - component: {fileID: 6773728768145390903}
   - component: {fileID: 6197677913653390844}
+  - component: {fileID: 4291760199487678321}
+  - component: {fileID: 8727358683044321721}
+  - component: {fileID: 6773728768145390903}
   - component: {fileID: 4059374324277512906}
   - component: {fileID: 2363304691391067766}
   m_Layer: 7
@@ -34,25 +109,23 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 8180700545893525733}
+  - {fileID: 6540396712384995659}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8727358683044321721
-MonoBehaviour:
+--- !u!135 &6197677913653390844
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5409118776170786588}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9510792c97cb4439969bf43ace0890d9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  proximitySensor: {fileID: 4059374324277512906}
-  agent: {fileID: 4291760199487678321}
-  agentConfiguration: {fileID: 11400000, guid: 1f84cdf9e5e6a4710ae9f1508b8ec4a4, type: 2}
-  weaponsUser: {fileID: 2363304691391067766}
+  serializedVersion: 2
+  m_Radius: 1
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!195 &4291760199487678321
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -75,6 +148,22 @@ NavMeshAgent:
   m_BaseOffset: 0.39
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &8727358683044321721
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5409118776170786588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9510792c97cb4439969bf43ace0890d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  proximitySensor: {fileID: 4059374324277512906}
+  agent: {fileID: 4291760199487678321}
+  agentConfiguration: {fileID: 11400000, guid: 1f84cdf9e5e6a4710ae9f1508b8ec4a4, type: 2}
+  weaponsUser: {fileID: 2363304691391067766}
 --- !u!114 &6773728768145390903
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -87,19 +176,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1125600c67742f4808565e572b6cf3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!135 &6197677913653390844
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5409118776170786588}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &4059374324277512906
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -113,7 +189,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sensorConfig: {fileID: 11400000, guid: b8ccf3491e5de4c07b35522485813281, type: 2}
-  sensorTrigger: {fileID: 6197677913653390844}
+  sensorTrigger: {fileID: 1548377619761426369}
   friendlies: []
   enemies: []
   cover: []
@@ -143,35 +219,35 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: dda142518c0de4e54b98407d4637e447, type: 3}
       propertyPath: m_LocalScale.x
-      value: 87.504005
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: dda142518c0de4e54b98407d4637e447, type: 3}
       propertyPath: m_LocalScale.y
-      value: 87.504005
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: dda142518c0de4e54b98407d4637e447, type: 3}
       propertyPath: m_LocalScale.z
-      value: 87.504005
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: dda142518c0de4e54b98407d4637e447, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.04516
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: dda142518c0de4e54b98407d4637e447, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.26
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: dda142518c0de4e54b98407d4637e447, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.37
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: dda142518c0de4e54b98407d4637e447, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7071067
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: dda142518c0de4e54b98407d4637e447, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.7071068
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: dda142518c0de4e54b98407d4637e447, type: 3}
       propertyPath: m_LocalRotation.y
@@ -179,7 +255,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: dda142518c0de4e54b98407d4637e447, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: dda142518c0de4e54b98407d4637e447, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

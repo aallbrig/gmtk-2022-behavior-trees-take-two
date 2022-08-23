@@ -1,4 +1,5 @@
 using System;
+using Model.Interfaces;
 using Model.Interfaces.BattleSystem;
 using ScriptableObjects.Firearms;
 using UnityEngine;
@@ -9,7 +10,7 @@ namespace MonoBehaviours.BattleSystem
     {
         public event Action NoValidWeapon;
 
-        public IWeapon Weapon { get; set; }
+        public IFirearm Weapon { get; set; }
         public Firearm fireArm;
 
         private void Start()
