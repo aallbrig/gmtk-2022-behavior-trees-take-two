@@ -1,5 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using Model.Interfaces.BattleSystem;
+using MonoBehaviours;
+using NSubstitute;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.AI;
@@ -9,8 +12,8 @@ namespace Tests.PlayMode.Scenarios.ForGrunts
 {
     public class GruntsFightEnemyMasterChiefTests
     {
-        private const string PrefabFileLocation = "Prefabs/Grunt (AI)";
         private GameObject _sutPrefabInstance;
+        private GameObject _testMasterChiefInstance;
         private GameObject _testPlatform;
         private readonly List<GameObject> _destroyMeAtEnd = new List<GameObject>();
 
@@ -21,9 +24,11 @@ namespace Tests.PlayMode.Scenarios.ForGrunts
             _testPlatform.GetComponent<NavMeshSurface>().BuildNavMesh();
             // Get nav mesh surface component and render out a nav mesh
             _destroyMeAtEnd.Add(_testPlatform);
-            _sutPrefabInstance = Object.Instantiate(Resources.Load<GameObject>(PrefabFileLocation));
+            _sutPrefabInstance = Object.Instantiate(Resources.Load<GameObject>("Prefabs/Grunt (AI)"));
             _destroyMeAtEnd.Add(_sutPrefabInstance);
-            // allow for https://docs.unity3d.com/Manual/ExecutionOrder.html
+            _testMasterChiefInstance = Object.Instantiate(Resources.Load<GameObject>("Prefabs/Master Chief (Player)"));
+            _testMasterChiefInstance.transform.position = Vector3.forward * 10;
+            _destroyMeAtEnd.Add(_testMasterChiefInstance);
             yield return null;
         }
 
@@ -32,23 +37,51 @@ namespace Tests.PlayMode.Scenarios.ForGrunts
         {
             foreach (var gameObject in _destroyMeAtEnd)
                 Object.Destroy(gameObject);
+            _destroyMeAtEnd.Clear();
         }
 
         [UnityTest]
-        public IEnumerator GruntAndMasterChiefAreLoadableGameplayElements()
+        public IEnumerator GruntTargetsMasterChief_IfCloseEnough()
         {
             var sut = _sutPrefabInstance;
-            var testMasterChief = Object.Instantiate(Resources.Load<GameObject>("Prefabs/Master Chief (Player)"));
-            _destroyMeAtEnd.Add(testMasterChief);
-            // position the two gameplay objects in relevant relation to each other
+            var testMasterChief = _testMasterChiefInstance;
+            var targetAcquired = false;
+            Transform acquiredTargetCapture = null;
+            var grunt = sut.GetComponent<Grunt>();
+            grunt.TargetAcquired += acquiredTarget =>
+            {
+                acquiredTargetCapture = acquiredTarget.Transform;
+                targetAcquired = true;
+            };
+
+            // A grunt can see master chief if he is 3m away
             sut.transform.position = Vector3.zero;
-            // Set master chief 3 meters away
             testMasterChief.transform.position = sut.transform.position + Vector3.forward * 3;
             yield return null;
 
-            // The grunt behavior tree produces an event to move towards master chief
-            Assert.NotNull(sut);
-            Assert.NotNull(testMasterChief);
+            Assert.IsTrue(targetAcquired);
+            Assert.AreEqual(testMasterChief.transform, acquiredTargetCapture);
+        }
+
+        // TODO
+        // [UnityTest]
+        public IEnumerator GruntMovesCloseToMasterChief_IfOutsideEffectiveWeaponRange()
+        {
+            var sut = _sutPrefabInstance;
+            var testMasterChief = _testMasterChiefInstance;
+            var weaponUser = sut.GetComponent<IWeaponsUser>();
+            weaponUser.Weapon = Substitute.For<IWeapon>();
+            weaponUser.Weapon.EffectiveRange.Returns(4f);
+            var movingToMasterChief = false;
+            var grunt = _sutPrefabInstance.GetComponent<Grunt>();
+            grunt.MovingCloserToTarget += () => movingToMasterChief = true;
+
+            // A grunt move towards master chief
+            sut.transform.position = Vector3.zero;
+            testMasterChief.transform.position = sut.transform.position + Vector3.forward * (weaponUser.Weapon.EffectiveRange + 1);
+            yield return null;
+
+            Assert.IsTrue(movingToMasterChief);
         }
     }
 }

@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 6773728768145390903}
   - component: {fileID: 6197677913653390844}
   - component: {fileID: 4059374324277512906}
+  - component: {fileID: 2363304691391067766}
   m_Layer: 7
   m_Name: Grunt (AI)
   m_TagString: Untagged
@@ -51,6 +52,7 @@ MonoBehaviour:
   proximitySensor: {fileID: 4059374324277512906}
   agent: {fileID: 4291760199487678321}
   agentConfiguration: {fileID: 11400000, guid: 1f84cdf9e5e6a4710ae9f1508b8ec4a4, type: 2}
+  weaponsUser: {fileID: 2363304691391067766}
 --- !u!195 &4291760199487678321
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -115,6 +117,19 @@ MonoBehaviour:
   friendlies: []
   enemies: []
   cover: []
+--- !u!114 &2363304691391067766
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5409118776170786588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bedd50287d994d5897de175a78a0f167, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fireArm: {fileID: 11400000, guid: d0baf51ef2e514d8f8e503a0ec8d24d2, type: 2}
 --- !u!1001 &8506480220057800462
 PrefabInstance:
   m_ObjectHideFlags: 0

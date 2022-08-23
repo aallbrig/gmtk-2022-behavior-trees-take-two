@@ -3,6 +3,8 @@ using Model;
 using Model.AI.BehaviorTrees;
 using Model.AI.BehaviorTrees.BuildingBlocks;
 using Model.Interfaces;
+using Model.Interfaces.BattleSystem;
+using MonoBehaviours.BattleSystem;
 using MonoBehaviours.Sensors;
 using ScriptableObjects.Agent;
 using UnityEngine;
@@ -16,13 +18,15 @@ namespace MonoBehaviours
     {
         public ProximitySensor proximitySensor;
 
-        private static int _maxEnemyColliders = 3;
         public event Action<Target> TargetAcquired;
         public event Action TargetLost;
         public NavMeshAgent agent;
         public AgentConfiguration agentConfiguration;
+        public WeaponsUser weaponsUser;
 
         private IAgentConfiguration AgentConfig => agentConfiguration;
+        private IWeaponsUser WeaponsUser { get; set; }
+
         private float _timeOfLastThought;
         private Transform _target;
         private BehaviorTree _brain;
@@ -47,6 +51,12 @@ namespace MonoBehaviours
 
         private void Start()
         {
+            WeaponsUser ??= weaponsUser;
+            WeaponsUser ??= GetComponent<WeaponsUser>();
+            if (WeaponsUser == null)
+            {
+                // Throw exception as this is not desired
+            }
             agentConfiguration ??= ScriptableObject.CreateInstance<AgentConfiguration>();
             if (proximitySensor)
                 ConfigureTargetingSystem();
@@ -88,7 +98,7 @@ namespace MonoBehaviours
         }
 
         #if UNITY_EDITOR
-        private void OnDrawGizmos()
+        private void OnDrawGizmosSelected()
         {
             agentConfiguration ??= ScriptableObject.CreateInstance<AgentConfiguration>();
             if (_agentGizmoColor == default) {
@@ -105,10 +115,12 @@ namespace MonoBehaviours
                 Gizmos.color = Color.red;
                 Gizmos.DrawWireSphere(transformPosition, AgentConfig.AttackRange);
             }
-            else
+            Gizmos.color = _agentGizmoColor;
+            Gizmos.DrawWireSphere(transformPosition, AgentConfig.DetectRange);
+            if (WeaponsUser != default && WeaponsUser.Weapon != default)
             {
-                Gizmos.color = _agentGizmoColor;
-                Gizmos.DrawWireSphere(transformPosition, AgentConfig.DetectRange);
+                Gizmos.color = Color.green;
+                Gizmos.DrawWireSphere(transformPosition, WeaponsUser.Weapon.EffectiveRange);
             }
         }
         #endif
@@ -136,17 +148,24 @@ namespace MonoBehaviours
         {
             if (HasTarget() == false)
                 return Status.Failure;
-            if (Vector3.Distance(_target.position, transform.position) <= AgentConfig.AttackRange)
+            var distanceToTarget = Vector3.Distance(_target.position, transform.position);
+            if (distanceToTarget >= AgentConfig.DetectRange)
             {
+                return Status.Failure;
+            }
+            if (WeaponsUser.Weapon != default && distanceToTarget > WeaponsUser.Weapon.EffectiveRange)
+            {
+                MovingCloserToTarget?.Invoke();
                 agent.SetDestination(transform.position);
+                return Status.Running;
+            }
+            if (WeaponsUser.Weapon != default && distanceToTarget <= WeaponsUser.Weapon.EffectiveRange)
+            {
                 return Status.Success;
             }
-
-            if (agent.isOnNavMesh)
-            {
-                agent.SetDestination(_target.position);
-                return Status.Running;
-            } else return Status.Failure;
+            return Status.Failure;
         }
+
+        public event Action MovingCloserToTarget;
     }
 }
