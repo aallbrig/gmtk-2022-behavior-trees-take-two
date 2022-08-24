@@ -4,10 +4,8 @@ using Model.AI.BehaviorTrees.BuildingBlocks;
 
 namespace Model.AI.BehaviorTrees
 {
-    public class BehaviorTree
+    public class BehaviorTree: IBehaviorTree
     {
-        public event Action TreeTraversalCompleted;
-        public Status CurrentStatus = Status.Clean;
         public override string ToString()
         {
             // TODO
@@ -27,6 +25,7 @@ namespace Model.AI.BehaviorTrees
                 firstChildBehavior
             );
             BuildTreeGraph();
+            Reset();
         }
 
         private void BuildTreeGraph()
@@ -39,6 +38,7 @@ namespace Model.AI.BehaviorTrees
             while (_treeTraversalQueue.Count > 0)
             {
                 var b = _treeTraversalQueue.Dequeue();
+                CurrentBehavior = b;
                 if (_nodes.Contains(b) == false) _nodes.Add(b);
                 if (_adjacencyLists.ContainsKey(b) == false) _adjacencyLists[b] = new List<IBehavior>();
 
@@ -55,16 +55,31 @@ namespace Model.AI.BehaviorTrees
         private readonly Dictionary<IBehavior, List<IBehavior>> _adjacencyLists = new Dictionary<IBehavior, List<IBehavior>>();
         private readonly Queue<IBehavior> _treeTraversalQueue = new Queue<IBehavior>();
 
-        public void Run()
-        {
-            SimpleImplicitTreeTraversal();
-            TreeTraversalCompleted?.Invoke();
-        }
-
         private void SimpleImplicitTreeTraversal()
         {
             var status = _rootNode.Tick();
             CurrentStatus = status;
         }
+
+        public Status CurrentStatus { get; private set; } = Status.Clean;
+
+        public IBehavior CurrentBehavior { get; private set; }
+
+        public Queue<IBehavior> BehaviorQueue { get; } = new Queue<IBehavior>();
+
+        public void Reset()
+        {
+            CurrentStatus = Status.Clean;
+            CurrentBehavior = null;
+            BehaviorQueue.Clear();
+        }
+
+        public void Evaluate()
+        {
+            SimpleImplicitTreeTraversal();
+            BehaviorTraverseCompleted?.Invoke();
+        }
+
+        public event Action BehaviorTraverseCompleted;
     }
 }

@@ -13,9 +13,9 @@ namespace Tests.EditMode.Model.AI.BehaviorTrees
             var mockBehavior = Substitute.For<IBehavior>();
             var sut = new BehaviorTree(mockBehavior);
             var eventCalled = false;
-            sut.TreeTraversalCompleted += () => eventCalled = true;
+            sut.BehaviorTraverseCompleted += () => eventCalled = true;
 
-            sut.Run();
+            sut.Evaluate();
 
             Assert.IsTrue(eventCalled);
         }
@@ -26,7 +26,7 @@ namespace Tests.EditMode.Model.AI.BehaviorTrees
             var mockBehavior = Substitute.For<IBehavior>();
             var sut = new BehaviorTree(mockBehavior);
 
-            sut.Run();
+            sut.Evaluate();
 
             mockBehavior.Received().Tick();
         }

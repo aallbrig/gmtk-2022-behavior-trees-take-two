@@ -90,6 +90,7 @@ GameObject:
   - component: {fileID: 6773728768145390903}
   - component: {fileID: 4059374324277512906}
   - component: {fileID: 2363304691391067766}
+  - component: {fileID: 3084631048635562475}
   m_Layer: 7
   m_Name: Grunt (AI)
   m_TagString: Untagged
@@ -161,9 +162,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   proximitySensor: {fileID: 4059374324277512906}
+  weaponsUser: {fileID: 2363304691391067766}
+  behaviorTreeRunner: {fileID: 3084631048635562475}
   agent: {fileID: 4291760199487678321}
   agentConfiguration: {fileID: 11400000, guid: 1f84cdf9e5e6a4710ae9f1508b8ec4a4, type: 2}
-  weaponsUser: {fileID: 2363304691391067766}
 --- !u!114 &6773728768145390903
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -206,6 +208,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fireArm: {fileID: 11400000, guid: d0baf51ef2e514d8f8e503a0ec8d24d2, type: 2}
+--- !u!114 &3084631048635562475
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5409118776170786588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8f48a73114c418fb670447416da34fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  config: {fileID: 11400000, guid: c0424fd66db90432591bd647199c1425, type: 2}
+  timeLastRun: 0
 --- !u!1001 &8506480220057800462
 PrefabInstance:
   m_ObjectHideFlags: 0

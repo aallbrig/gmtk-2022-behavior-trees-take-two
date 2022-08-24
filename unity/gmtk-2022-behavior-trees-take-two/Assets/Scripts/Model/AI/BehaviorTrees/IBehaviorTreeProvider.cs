@@ -2,10 +2,8 @@ using System;
 
 namespace Model.AI.BehaviorTrees
 {
-    public interface IBehaviorTreeProvider
+    public interface IBehaviorTreeProvider<T>
     {
-        public event Action<BehaviorTree> BehaviorTreeProvided;
-
-        public BehaviorTree ProvideBehaviorTree();
+        public IBehaviorTree ProvideBehaviorTree(T context);
     }
 }
