@@ -11,10 +11,11 @@ namespace MonoBehaviours.Controllers
         public Camera perspectiveCamera;
         public float movementSpeed = 4;
         public float rotationSpeed = 15;
+        public bool isInputing = false;
         private CharacterController _characterController;
         private Camera _perspectiveCamera;
         private PlayerControls _controls;
-        [Header("Runtime Info")]
+        [Header("Runtime Info")] public Vector2 pointerPerformedPosition;
         [SerializeField] private Vector2 pointerStartPosition;
         [SerializeField] private Vector2 pointerEndPosition;
         [SerializeField] private Vector3 desiredWorldDirection = Vector3.zero;
@@ -31,6 +32,11 @@ namespace MonoBehaviours.Controllers
             _characterController ??= GetComponent<CharacterController>();
             _controls.MasterChief.PointerButtonPress.started += HandlePointerPressStart;
             _controls.MasterChief.PointerButtonPress.canceled += HandlePointerPressExit;
+            _controls.MasterChief.PointerPosition.performed += context =>
+            {
+                pointerPerformedPosition = context.ReadValue<Vector2>();
+                CalculateRelativeMovement();
+            };
         }
         private void Update()
         {
@@ -51,17 +57,20 @@ namespace MonoBehaviours.Controllers
         private void HandlePointerPressStart(InputAction.CallbackContext ctx)
         {
             pointerStartPosition = _controls.MasterChief.PointerPosition.ReadValue<Vector2>();
+            isInputing = true;
         }
 
         private void HandlePointerPressExit(InputAction.CallbackContext ctx)
         {
-            pointerEndPosition = _controls.MasterChief.PointerPosition.ReadValue<Vector2>();
-            CalculateRelativeMovement();
+            isInputing = false;
+            DesiredDirectionInWorld = Vector3.zero;
         }
 
         private void CalculateRelativeMovement()
         {
-            var inputDirection = (pointerEndPosition - pointerStartPosition).normalized;
+            if (isInputing == false) return;
+
+            var inputDirection = (pointerPerformedPosition - pointerStartPosition).normalized;
             var cameraTransform = _perspectiveCamera.transform;
             var right = cameraTransform.right;
             var forward = Vector3.Cross(Vector3.right, Vector3.up);
