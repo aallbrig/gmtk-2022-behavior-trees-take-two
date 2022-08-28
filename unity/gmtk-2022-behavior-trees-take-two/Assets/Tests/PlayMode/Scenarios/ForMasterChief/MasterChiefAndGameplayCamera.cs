@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem;
 using UnityEngine.TestTools;
+using UnityEngine.TestTools.Utils;
 
 namespace Tests.PlayMode.Scenarios.ForMasterChief
 {
@@ -76,8 +77,8 @@ namespace Tests.PlayMode.Scenarios.ForMasterChief
         }
          private static LocomotionTouchInput[] _locomotionTouchInput = {
              new LocomotionTouchInput("Up input", Vector2.zero, Vector2.up, new Vector3(0, 0, 1f)),
-             new LocomotionTouchInput("Down input", Vector2.zero, Vector2.down, new Vector3(0, 0, -1f)),
-             new LocomotionTouchInput("Left input", Vector2.zero, Vector2.left, new Vector3(-1f,0,0)),
+             new LocomotionTouchInput("Down input", Vector2.zero, Vector2.down, new Vector3(0, 0, -1.0f)),
+             new LocomotionTouchInput("Left input", Vector2.zero, Vector2.left, new Vector3(-1.0f,0,0)),
              new LocomotionTouchInput("Right input", Vector2.zero, Vector2.right, new Vector3(1f,0,0)),
          };
 
@@ -102,7 +103,8 @@ namespace Tests.PlayMode.Scenarios.ForMasterChief
             yield return null;
 
             // master chief should now know which direction to move
-            Assert.AreEqual(input.ExpectedDesiredDirection, _sutPrefabInstance.GetComponent<ILocomotion>().DesiredDirectionInWorld, input.TestMessage);
+            var locomotion = _sutPrefabInstance.GetComponent<ILocomotion>();
+            Assert.That(locomotion.DesiredDirectionInWorld, Is.EqualTo(input.ExpectedDesiredDirection).Using(Vector3EqualityComparer.Instance), input.TestMessage);
         }
     }
 }

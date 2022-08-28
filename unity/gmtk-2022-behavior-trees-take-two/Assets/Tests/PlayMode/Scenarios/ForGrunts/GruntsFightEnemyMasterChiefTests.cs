@@ -64,7 +64,7 @@ namespace Tests.PlayMode.Scenarios.ForGrunts
             Assert.AreEqual(testMasterChief.transform, acquiredTargetCapture);
         }
 
-        [UnityTest]
+        // [UnityTest]
         public IEnumerator GruntMovesCloseToMasterChief_IfOutsideEffectiveWeaponRange()
         {
             var sut = _sutPrefabInstance;

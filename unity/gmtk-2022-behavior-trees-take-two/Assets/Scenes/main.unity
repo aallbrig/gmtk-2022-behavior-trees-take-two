@@ -1450,8 +1450,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1783933469}
-  m_LocalRotation: {x: 0.38268346, y: 0.000000022481213, z: -0.000000009312023, w: 0.92387956}
-  m_LocalPosition: {x: 0, y: 10, z: -10}
+  m_LocalRotation: {x: 0.34727672, y: 0.21462882, z: -0.08198093, w: 0.9091823}
+  m_LocalPosition: {x: -5, y: 10, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -2110,7 +2110,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8618010626526526602, guid: 69059c57ae7e64711ba7c7834fbaa528, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -5
       objectReference: {fileID: 0}
     - target: {fileID: 8618010626526526602, guid: 69059c57ae7e64711ba7c7834fbaa528, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2122,19 +2122,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8618010626526526602, guid: 69059c57ae7e64711ba7c7834fbaa528, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.92387956
+      value: 0.9091823
       objectReference: {fileID: 0}
     - target: {fileID: 8618010626526526602, guid: 69059c57ae7e64711ba7c7834fbaa528, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.38268346
+      value: 0.34727672
       objectReference: {fileID: 0}
     - target: {fileID: 8618010626526526602, guid: 69059c57ae7e64711ba7c7834fbaa528, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.000000022481213
+      value: 0.21462882
       objectReference: {fileID: 0}
     - target: {fileID: 8618010626526526602, guid: 69059c57ae7e64711ba7c7834fbaa528, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.000000009312023
+      value: -0.08198093
       objectReference: {fileID: 0}
     - target: {fileID: 8618010626526526602, guid: 69059c57ae7e64711ba7c7834fbaa528, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -2156,5 +2156,9 @@ PrefabInstance:
       propertyPath: m_LookAt
       value: 
       objectReference: {fileID: 218263569}
+    - target: {fileID: 8618010627028704337, guid: 69059c57ae7e64711ba7c7834fbaa528, type: 3}
+      propertyPath: m_FollowOffset.x
+      value: -5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 69059c57ae7e64711ba7c7834fbaa528, type: 3}

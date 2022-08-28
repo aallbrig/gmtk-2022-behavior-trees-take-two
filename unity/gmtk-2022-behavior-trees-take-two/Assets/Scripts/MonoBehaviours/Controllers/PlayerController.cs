@@ -10,6 +10,7 @@ namespace MonoBehaviours.Controllers
     {
         public Camera perspectiveCamera;
         public float movementSpeed = 4;
+        public float rotationSpeed = 15;
         private CharacterController _characterController;
         private Camera _perspectiveCamera;
         private PlayerControls _controls;
@@ -36,8 +37,8 @@ namespace MonoBehaviours.Controllers
             if (DesiredDirectionInWorld != Vector3.zero)
             {
                 _characterController.Move(DesiredDirectionInWorld * movementSpeed * Time.deltaTime);
-                // _characterController.transform.Rotate();
-                transform.rotation = Quaternion.LookRotation(DesiredDirectionInWorld);
+                var lookDirection = Quaternion.LookRotation(DesiredDirectionInWorld);
+                transform.rotation = Quaternion.Lerp(transform.rotation, lookDirection, rotationSpeed * Time.deltaTime);
             }
         }
 
@@ -55,15 +56,15 @@ namespace MonoBehaviours.Controllers
         {
             var inputDirection = (pointerEndPosition - pointerStartPosition).normalized;
             var cameraTransform = _perspectiveCamera.transform;
-            var forward = cameraTransform.forward;
-            forward.y = 0;
             var right = cameraTransform.right;
+            var forward = Vector3.Cross(Vector3.right, Vector3.up);
+            forward.y = 0;
             right.y = 0;
+            forward = forward.normalized;
+            right = right.normalized;
             var relativeForward= inputDirection.y * forward;
-            relativeForward.y = 0;
             var relativeRight = inputDirection.x * right;
-            relativeRight.y = 0;
-            DesiredDirectionInWorld = (relativeForward + relativeRight).normalized;
+            DesiredDirectionInWorld = relativeForward + relativeRight;
         }
 
         public Vector3 DesiredDirectionInWorld
