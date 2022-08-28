@@ -5,7 +5,10 @@
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "Scripts",
-        "NavMeshComponents"
+        "NavMeshComponents",
+        "Unity.InputSystem",
+        "Unity.InputSystem.TestFramework",
+        "Cinemachine"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

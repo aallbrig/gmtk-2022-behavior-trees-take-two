@@ -22,8 +22,8 @@ namespace Tests.PlayMode.Scenarios.ForGrunts
         public IEnumerator SetUp()
         {
             _testPlatform = Object.Instantiate(Resources.Load<GameObject>("Prefabs/Environment/Test Combat Platform"));
-            _testPlatform.GetComponent<NavMeshSurface>().BuildNavMesh();
             // Get nav mesh surface component and render out a nav mesh
+            _testPlatform.GetComponent<NavMeshSurface>().BuildNavMesh();
             _destroyMeAtEnd.Add(_testPlatform);
             _sutPrefabInstance = Object.Instantiate(Resources.Load<GameObject>("Prefabs/Grunt (AI)"));
             _destroyMeAtEnd.Add(_sutPrefabInstance);
