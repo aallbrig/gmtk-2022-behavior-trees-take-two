@@ -17,8 +17,9 @@ namespace MonoBehaviours.Controllers
         [Header("Runtime Info")]
         [SerializeField] private Vector2 pointerStartPosition;
         [SerializeField] private Vector2 pointerEndPosition;
-        [SerializeField] private Vector3 desiredDirectionInWorld = Vector3.zero;
+        [SerializeField] private Vector3 desiredWorldDirection = Vector3.zero;
         [SerializeField] private bool isGrounded = true;
+        [SerializeField] private Vector3 velocity;
 
         private void Awake() => _controls = new PlayerControls();
         private void OnEnable() => _controls.Enable();
@@ -34,11 +35,16 @@ namespace MonoBehaviours.Controllers
         private void Update()
         {
             isGrounded = _characterController.isGrounded;
+            velocity = _characterController.velocity;
             if (DesiredDirectionInWorld != Vector3.zero)
             {
-                _characterController.Move(DesiredDirectionInWorld * movementSpeed * Time.deltaTime);
+                _characterController.Move(((DesiredDirectionInWorld * movementSpeed) + new Vector3(0, -9.81f, 0)) * Time.deltaTime);
                 var lookDirection = Quaternion.LookRotation(DesiredDirectionInWorld);
                 transform.rotation = Quaternion.Lerp(transform.rotation, lookDirection, rotationSpeed * Time.deltaTime);
+            }
+            else
+            {
+                _characterController.Move(new Vector3(0, -9.81f, 0) * Time.deltaTime);
             }
         }
 
@@ -52,6 +58,7 @@ namespace MonoBehaviours.Controllers
             pointerEndPosition = _controls.MasterChief.PointerPosition.ReadValue<Vector2>();
             CalculateRelativeMovement();
         }
+
         private void CalculateRelativeMovement()
         {
             var inputDirection = (pointerEndPosition - pointerStartPosition).normalized;
@@ -69,8 +76,8 @@ namespace MonoBehaviours.Controllers
 
         public Vector3 DesiredDirectionInWorld
         {
-            get => desiredDirectionInWorld;
-            private set => desiredDirectionInWorld = value;
+            get => desiredWorldDirection;
+            private set => desiredWorldDirection = value;
         } 
     }
 }
