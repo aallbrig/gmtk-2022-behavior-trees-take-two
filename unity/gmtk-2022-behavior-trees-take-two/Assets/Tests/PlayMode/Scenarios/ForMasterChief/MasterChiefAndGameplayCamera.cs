@@ -99,7 +99,6 @@ namespace Tests.PlayMode.Scenarios.ForMasterChief
             Press(pointer.press);
             yield return null;
             Set(pointer.position, input.ReleasePosition);
-            Release(pointer.press);
             yield return null;
 
             // master chief should now know which direction to move
