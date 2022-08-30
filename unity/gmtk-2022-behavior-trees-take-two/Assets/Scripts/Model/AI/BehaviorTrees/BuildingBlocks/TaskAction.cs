@@ -1,13 +1,19 @@
+using System;
+
 namespace Model.AI.BehaviorTrees.BuildingBlocks
 {
     public class TaskAction: Behavior
     {
-        private readonly ITaskActionContext _taskActionContext;
-        public TaskAction(ITaskActionContext taskActionContext) => _taskActionContext = taskActionContext;
-
-        public override Status Tick()
+        private readonly Func<Status> _taskActionFunction;
+        public TaskAction(Func<Status> taskActionFunction)
         {
-            CurrentStatus = _taskActionContext.TaskAction();
+            _taskActionFunction = taskActionFunction;
+        }
+
+        public override Status Tick(IBehaviorTree bt)
+        {
+            CurrentStatus = _taskActionFunction.Invoke();
+            BroadcastEventForStatus(CurrentStatus);
             return CurrentStatus;
         }
     }

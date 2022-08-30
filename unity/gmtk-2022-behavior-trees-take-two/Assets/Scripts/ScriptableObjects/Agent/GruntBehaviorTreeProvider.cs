@@ -8,9 +8,9 @@ namespace ScriptableObjects.Agent
     {
         public IBehaviorTree ProvideBehaviorTree(Grunt grunt)
         {
-            var hasTarget = new Conditional(new ConditionalContext(grunt.HasTarget));
-            var moveToTarget = new TaskAction(new TaskActionContext(grunt.MoveToTarget));
-            // c: have target -> move to target
+            // c: have target -> ta: move to target
+            var hasTarget = new Conditional(grunt.HasTarget);
+            var moveToTarget = new TaskAction(grunt.MoveToTarget);
 
             var seq = new Sequence();
             seq.AddChild(hasTarget);

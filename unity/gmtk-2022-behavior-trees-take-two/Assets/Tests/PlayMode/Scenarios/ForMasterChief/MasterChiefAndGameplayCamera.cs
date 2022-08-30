@@ -49,23 +49,13 @@ namespace Tests.PlayMode.Scenarios.ForMasterChief
                 Object.Destroy(gameObject);
             _destroyMeAtEnd.Clear();
         }
-        [UnityTest]
-        public IEnumerator MasterChiefAndCamera_Exist()
-        {
-            // Use the Assert class to test conditions.
-            // yield to skip a frame
-            yield return null;
-            Assert.NotNull(_sutPrefabInstance);
-            Assert.NotNull(_testGameplayCameraInstance);
-            Assert.NotNull(_testPlatform);
-        }
 
         public class LocomotionTouchInput
         {
             public Vector2 PressPosition;
             public Vector2 ReleasePosition;
             public Vector3 ExpectedDesiredDirection;
-            public string TestMessage;
+            public readonly string TestMessage;
             public LocomotionTouchInput(string testMessage, Vector2 pressPosition, Vector2 releasePosition, Vector3 expectedDesiredDirection)
             {
                 PressPosition = pressPosition;

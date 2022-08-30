@@ -13,7 +13,7 @@ using UnityEngine.AI;
 namespace MonoBehaviours
 {
     [RequireComponent(typeof(NavMeshAgent))]
-    public class Grunt : MonoBehaviour, ITrackTargets
+    public class Grunt : MonoBehaviour, ITrackTargets, IMonobehaviourDebugLogger
     {
         public ProximitySensor proximitySensor;
         public WeaponsUser weaponsUser;
@@ -27,7 +27,8 @@ namespace MonoBehaviours
 
         private IAgentConfiguration AgentConfig => agentConfiguration;
         private IWeaponsUser WeaponsUser { get; set; }
-        private Transform _target;
+        [SerializeField] private Transform target;
+        [SerializeField] private bool debugEnabled;
 
         private void Start()
         {
@@ -54,40 +55,49 @@ namespace MonoBehaviours
         {
             proximitySensor.EnemySensed += acquired =>
             {
-                if (_target == null) SetTarget(new Target(acquired.transform));
+                if (target == null) SetTarget(new Target(acquired.transform));
             };
             proximitySensor.EnemySenseLost += targetLost =>
             {
-                if (_target == targetLost.transform)
+                if (target == targetLost.transform)
                 {
-                    _target = null;
+                    target = null;
                     TargetLost?.Invoke();
                 }
             };
         }
 
-        public void SetTarget(Target target)
+        public void SetTarget(Target newTarget)
         {
-            _target = target.Transform ? target.Transform : throw new ArgumentNullException(nameof(target));
-            TargetAcquired?.Invoke(target);
+            target = newTarget.Transform ? newTarget.Transform : throw new ArgumentNullException(nameof(newTarget));
+            TargetAcquired?.Invoke(newTarget);
         }
 
-        public bool HasTarget() => _target != null;
+        public bool HasTarget()
+        {
+            Debug.Log($"{name} | has target? {target != null}");
+            return target != null;
+        }
 
         public Status MoveToTarget()
         {
             if (HasTarget() == false)
+            {
                 return Status.Failure;
-            var distanceToTarget = Vector3.Distance(_target.position, transform.position);
+            }
+            var distanceToTarget = Vector3.Distance(target.position, transform.position);
+            Debug.Log($"{name} | distance to target {distanceToTarget}");
             if (distanceToTarget >= AgentConfig.DetectRange)
             {
+                DebugLog("target too far");
                 agent.SetDestination(transform.position);
                 return Status.Failure;
             }
             if (WeaponsUser.Weapon != default && distanceToTarget > WeaponsUser.Weapon.EffectiveRange)
             {
+                DebugLog($"moving to target (pos  {target.transform.position})");
                 MovingCloserToTarget?.Invoke();
-                agent.SetDestination(_target.position);
+                agent.SetDestination(target.position);
                 return Status.Running;
             }
             if (WeaponsUser.Weapon != default && distanceToTarget <= WeaponsUser.Weapon.EffectiveRange)
@@ -99,5 +109,10 @@ namespace MonoBehaviours
         }
 
         public event Action MovingCloserToTarget;
+
+        public void DebugLog(string logMessage)
+        {
+            if (debugEnabled) Debug.Log($"{name} | {logMessage}");
+        }
     }
 }

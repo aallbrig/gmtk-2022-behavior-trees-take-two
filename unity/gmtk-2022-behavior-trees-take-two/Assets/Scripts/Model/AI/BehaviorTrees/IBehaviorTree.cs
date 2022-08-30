@@ -10,6 +10,8 @@ namespace Model.AI.BehaviorTrees
         public Queue<IBehavior> BehaviorQueue { get; }
         public void Reset();
         public void Evaluate();
+        public void Step();
+        public event Action StepCompleted;
         public event Action BehaviorTraverseCompleted;
     }
 }

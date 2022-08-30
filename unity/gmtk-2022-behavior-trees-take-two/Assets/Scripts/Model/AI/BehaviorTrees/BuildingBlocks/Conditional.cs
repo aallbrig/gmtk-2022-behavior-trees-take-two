@@ -1,13 +1,19 @@
+using System;
+
 namespace Model.AI.BehaviorTrees.BuildingBlocks
 {
     public class Conditional: Behavior
     {
-        private readonly IConditionalContext _context;
-        public Conditional(IConditionalContext conditionalContext) => _context = conditionalContext;
-
-        public override Status Tick()
+        private readonly Func<bool> _predicate;
+        public Conditional(Func<bool> predicate)
         {
-            CurrentStatus = _context.ConditionalFunction() ? Status.Success : Status.Failure;
+            _predicate = predicate;
+        }
+
+        public override Status Tick(IBehaviorTree bt)
+        {
+            CurrentStatus = _predicate.Invoke() ? Status.Success : Status.Failure;
+            BroadcastEventForStatus(CurrentStatus);
             return CurrentStatus;
         }
     }

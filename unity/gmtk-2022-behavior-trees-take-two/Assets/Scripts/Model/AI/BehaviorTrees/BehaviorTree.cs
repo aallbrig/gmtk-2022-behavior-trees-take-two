@@ -20,12 +20,10 @@ namespace Model.AI.BehaviorTrees
         }
         public BehaviorTree(IBehavior firstChildBehavior)
         {
-            _rootNode = new Decorator(
-                new DecoratorContext(childBehavior => childBehavior.Tick()),
-                firstChildBehavior
-            );
+            _rootNode = new Decorator(firstChildBehavior);
             BuildTreeGraph();
             Reset();
+            BehaviorQueue.Enqueue(_rootNode);
         }
 
         private void BuildTreeGraph()
@@ -57,8 +55,9 @@ namespace Model.AI.BehaviorTrees
 
         private void SimpleImplicitTreeTraversal()
         {
-            var status = _rootNode.Tick();
+            var status = _rootNode.Tick(this);
             CurrentStatus = status;
+            BehaviorTraverseCompleted?.Invoke();
         }
 
         public Status CurrentStatus { get; private set; } = Status.Clean;
@@ -72,14 +71,41 @@ namespace Model.AI.BehaviorTrees
             CurrentStatus = Status.Clean;
             CurrentBehavior = null;
             BehaviorQueue.Clear();
+            BehaviorQueue.Enqueue(_rootNode);
+            _nodes.ForEach(node => node.Reset());
         }
 
         public void Evaluate()
         {
-            SimpleImplicitTreeTraversal();
+            // SimpleImplicitTreeTraversal();
+            EventDrivenTreeTraversal();
+        }
+
+        public void Step()
+        {
+            if (BehaviorQueue.Count == 0)
+            {
+                BehaviorTraverseCompleted?.Invoke();
+                return;
+            }
+
+            var currentBehavior = BehaviorQueue.Dequeue();
+
+            var status = currentBehavior.Tick(this);
+            if (status == Status.Running)
+                BehaviorQueue.Enqueue(currentBehavior);
+
+            StepCompleted?.Invoke();
+        }
+
+        private void EventDrivenTreeTraversal()
+        {
+            while (BehaviorQueue.Count > 0)
+                Step();
             BehaviorTraverseCompleted?.Invoke();
         }
 
+        public event Action StepCompleted;
         public event Action BehaviorTraverseCompleted;
     }
 }

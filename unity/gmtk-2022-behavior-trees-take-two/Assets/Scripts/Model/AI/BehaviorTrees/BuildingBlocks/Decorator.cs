@@ -7,11 +7,8 @@ namespace Model.AI.BehaviorTrees.BuildingBlocks
     {
         public event Action<IBehavior> SingleChildBehaviorSet;
 
-        private readonly IDecoratorContext _ctx;
-
-        public Decorator(IDecoratorContext ctx, IBehavior behavior)
+        public Decorator(IBehavior behavior)
         {
-            _ctx = ctx;
             SetOnlyChild(behavior);
         }
 
@@ -23,9 +20,28 @@ namespace Model.AI.BehaviorTrees.BuildingBlocks
             SingleChildBehaviorSet?.Invoke(behavior);
         }
 
-        public override Status Tick()
+        public override Status Tick(IBehaviorTree bt)
         {
-            return _ctx.RunOperation(children[0]);
+            var child = children[0];
+            child.Succeeded += () =>
+            {
+                CurrentStatus = Status.Success;
+                BroadcastEventForStatus(CurrentStatus);
+            };
+            child.Failed += () =>
+            {
+                CurrentStatus = Status.Failure;
+                BroadcastEventForStatus(CurrentStatus);
+            };
+            child.IsRunning += () =>
+            {
+                CurrentStatus = Status.Running;
+                BroadcastEventForStatus(CurrentStatus);
+            };
+
+            if (!bt.BehaviorQueue.Contains(child)) bt.BehaviorQueue.Enqueue(child);
+
+            return CurrentStatus;
         }
     }
 }

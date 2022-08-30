@@ -221,6 +221,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   config: {fileID: 11400000, guid: c0424fd66db90432591bd647199c1425, type: 2}
+  debugEnabled: 1
   timeLastRun: 0
 --- !u!1001 &8506480220057800462
 PrefabInstance:

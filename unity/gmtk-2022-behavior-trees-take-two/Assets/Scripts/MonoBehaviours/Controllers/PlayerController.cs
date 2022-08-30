@@ -44,14 +44,10 @@ namespace MonoBehaviours.Controllers
             velocity = _characterController.velocity;
             if (DesiredDirectionInWorld != Vector3.zero)
             {
-                _characterController.Move(((DesiredDirectionInWorld * movementSpeed) + new Vector3(0, -9.81f, 0)) * Time.deltaTime);
                 var lookDirection = Quaternion.LookRotation(DesiredDirectionInWorld);
                 transform.rotation = Quaternion.Lerp(transform.rotation, lookDirection, rotationSpeed * Time.deltaTime);
             }
-            else
-            {
-                _characterController.Move(new Vector3(0, -9.81f, 0) * Time.deltaTime);
-            }
+            _characterController.Move(((DesiredDirectionInWorld * movementSpeed) + new Vector3(0, -9.81f, 0)) * Time.deltaTime);
         }
 
         private void HandlePointerPressStart(InputAction.CallbackContext ctx)

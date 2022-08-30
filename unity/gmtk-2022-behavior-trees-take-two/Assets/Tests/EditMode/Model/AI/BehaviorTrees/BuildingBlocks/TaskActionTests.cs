@@ -1,5 +1,6 @@
 using Model.AI.BehaviorTrees;
 using Model.AI.BehaviorTrees.BuildingBlocks;
+using NSubstitute;
 using NUnit.Framework;
 
 namespace Tests.EditMode.Model.AI.BehaviorTrees.BuildingBlocks
@@ -11,9 +12,9 @@ namespace Tests.EditMode.Model.AI.BehaviorTrees.BuildingBlocks
         [Test]
         public void TaskAction_AllowsConsumer_ToDefineReturnStatus([ValueSource(nameof(_checkStatuses))] Status desiredStatus)
         {
-            var sut = new TaskAction(new TaskActionContext(() => desiredStatus));
+            var sut = new TaskAction(() => desiredStatus);
 
-            sut.Tick();
+            sut.Tick(Substitute.For<IBehaviorTree>());
 
             Assert.AreEqual(desiredStatus, sut.CurrentStatus);
         }

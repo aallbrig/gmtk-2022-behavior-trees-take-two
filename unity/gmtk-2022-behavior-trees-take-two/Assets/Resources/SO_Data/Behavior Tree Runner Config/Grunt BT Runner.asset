@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b32e36a228e144a593d0ecb864e26ed3, type: 3}
   m_Name: Grunt BT Runner
   m_EditorClassIdentifier: 
-  timeBetween: 0.75
-  delayType: 1
+  timeBetween: 0.2
+  delayType: 0

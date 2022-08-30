@@ -5,6 +5,6 @@ namespace Model.Interfaces
     {
         public event Action<Target> TargetAcquired;
         public event Action TargetLost;
-        public void SetTarget(Target target);
+        public void SetTarget(Target newTarget);
     }
 }

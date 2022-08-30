@@ -28,7 +28,7 @@ namespace Tests.EditMode.Model.AI.BehaviorTrees
 
             sut.Evaluate();
 
-            mockBehavior.Received().Tick();
+            mockBehavior.Received().Tick(sut);
         }
     }
 }
