@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Model.Interfaces;
 using Model.Interfaces.BattleSystem;
 using MonoBehaviours;
+using MonoBehaviours.Brains;
 using NSubstitute;
 using NUnit.Framework;
 using UnityEngine;
@@ -45,6 +46,7 @@ namespace Tests.PlayMode.Scenarios.ForGrunts
         public IEnumerator GruntTargetsMasterChief_IfCloseEnough()
         {
             var sut = _sutPrefabInstance;
+            sut.GetComponent<BehaviorTreeRunner>().config.timeBetween = 0.01f;
             var testMasterChief = _testMasterChiefInstance;
             var targetAcquired = false;
             Transform acquiredTargetCapture = null;
@@ -58,13 +60,13 @@ namespace Tests.PlayMode.Scenarios.ForGrunts
             // A grunt can see master chief if he is 3m away
             sut.transform.position = Vector3.zero;
             testMasterChief.transform.position = sut.transform.position + Vector3.forward * 3;
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.25f);
 
             Assert.IsTrue(targetAcquired);
             Assert.AreEqual(testMasterChief.transform, acquiredTargetCapture);
         }
 
-        // [UnityTest]
+        [UnityTest]
         public IEnumerator GruntMovesCloseToMasterChief_IfOutsideEffectiveWeaponRange()
         {
             var sut = _sutPrefabInstance;
@@ -72,15 +74,16 @@ namespace Tests.PlayMode.Scenarios.ForGrunts
             var weaponUser = sut.GetComponent<IWeaponsUser>();
             weaponUser.Weapon = Substitute.For<IFirearm>();
             weaponUser.Weapon.EffectiveRange.Returns(1f);
+            sut.GetComponent<BehaviorTreeRunner>().config.timeBetween = 0.01f;
             var movingToMasterChief = false;
             var grunt = _sutPrefabInstance.GetComponent<Grunt>();
             grunt.MovingCloserToTarget += () => movingToMasterChief = true;
 
             // A grunt move towards master chief
             sut.transform.position = Vector3.zero;
-            testMasterChief.transform.position = sut.transform.position + Vector3.forward * (weaponUser.Weapon.EffectiveRange + 1);
-            yield return null;
-            yield return null;
+            var masterChiefWithinRange = sut.transform.position + Vector3.forward * (weaponUser.Weapon.EffectiveRange + 1);
+            testMasterChief.transform.position = masterChiefWithinRange;
+            yield return new WaitForSeconds(0.25f);
 
             Assert.IsTrue(movingToMasterChief);
         }
