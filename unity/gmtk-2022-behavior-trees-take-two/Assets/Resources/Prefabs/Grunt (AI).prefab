@@ -166,6 +166,8 @@ MonoBehaviour:
   behaviorTreeRunner: {fileID: 3084631048635562475}
   agent: {fileID: 4291760199487678321}
   agentConfiguration: {fileID: 11400000, guid: 1f84cdf9e5e6a4710ae9f1508b8ec4a4, type: 2}
+  target: {fileID: 0}
+  debugEnabled: 1
 --- !u!114 &6773728768145390903
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -223,6 +225,7 @@ MonoBehaviour:
   config: {fileID: 11400000, guid: c0424fd66db90432591bd647199c1425, type: 2}
   debugEnabled: 1
   timeLastRun: 0
+  timeSinceLastRun: 0
 --- !u!1001 &8506480220057800462
 PrefabInstance:
   m_ObjectHideFlags: 0
