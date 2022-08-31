@@ -75,7 +75,7 @@ namespace MonoBehaviours
 
         public bool HasTarget()
         {
-            Debug.Log($"{name} | has target? {target != null}");
+            DebugLog($"has target? {target != null}");
             return target != null;
         }
 
@@ -83,28 +83,31 @@ namespace MonoBehaviours
         {
             if (HasTarget() == false)
             {
+                DebugLog("No target -- failure");
                 return Status.Failure;
             }
             var distanceToTarget = Vector3.Distance(target.position, transform.position);
-            Debug.Log($"{name} | distance to target {distanceToTarget}");
+            DebugLog($"distance to target {distanceToTarget}");
             if (distanceToTarget >= AgentConfig.DetectRange)
             {
-                DebugLog("target too far");
+                DebugLog("target too far! -- failure");
                 agent.SetDestination(transform.position);
                 return Status.Failure;
             }
             if (WeaponsUser.Weapon != default && distanceToTarget > WeaponsUser.Weapon.EffectiveRange)
             {
-                DebugLog($"moving to target (pos  {target.transform.position})");
+                DebugLog($"moving to target (pos {target.transform.position}) -- running");
                 MovingCloserToTarget?.Invoke();
                 agent.SetDestination(target.position);
                 return Status.Running;
             }
             if (WeaponsUser.Weapon != default && distanceToTarget <= WeaponsUser.Weapon.EffectiveRange)
             {
+                DebugLog("Close enough to target -- success!");
                 agent.SetDestination(transform.position);
                 return Status.Success;
             }
+            DebugLog("Unhandled case -- failure");
             return Status.Failure;
         }
 

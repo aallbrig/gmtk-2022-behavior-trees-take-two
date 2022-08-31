@@ -17,7 +17,7 @@ namespace Model.AI.BehaviorTrees.BuildingBlocks
             b.Succeeded += () =>
             {
                 CurrentIndex++;
-                CurrentStatus = Status.Running;
+                CurrentStatus = CurrentIndex >= children.Count ? Status.Success : Status.Running;
                 BroadcastEventForStatus(CurrentStatus);
             };
             b.IsRunning += () =>

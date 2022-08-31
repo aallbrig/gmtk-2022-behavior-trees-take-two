@@ -44,7 +44,7 @@ namespace Tests.EditMode.Model.AI.BehaviorTrees.BuildingBlocks
             testBehaviorTree.Evaluate();
 
             Assert.IsTrue(nextBehaviorCalled);
-        } 
+        }
         [Test]
         public void Sequences_HandleBehaviorFailures()
         {
@@ -68,6 +68,26 @@ namespace Tests.EditMode.Model.AI.BehaviorTrees.BuildingBlocks
             Assert.AreEqual(Status.Failure, sut.CurrentStatus);
             Assert.IsFalse(nextBehaviorCalled);
             Assert.IsTrue(failureEventBroadcast);
+        }
+        [Test]
+        public void Sequences_CallsNextAction_WhenConditionSucceeds()
+        {
+            var sut = new Sequence();
+            var nextBehaviorCalled = false;
+            var previousBehavior = new Conditional(() => true);
+            var nextBehavior = new TaskAction(() =>
+            {
+                nextBehaviorCalled = true;
+                return Status.Success;
+            });
+            sut.AddChild(previousBehavior);
+            sut.AddChild(nextBehavior);
+            var testBehaviorTree = new BehaviorTree(sut);
+
+            testBehaviorTree.Evaluate();
+
+            Assert.AreEqual(Status.Success, sut.CurrentStatus);
+            Assert.IsTrue(nextBehaviorCalled);
         } 
     }
 }

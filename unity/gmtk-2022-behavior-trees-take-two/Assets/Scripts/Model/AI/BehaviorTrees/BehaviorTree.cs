@@ -6,6 +6,7 @@ namespace Model.AI.BehaviorTrees
 {
     public class BehaviorTree: IBehaviorTree
     {
+        public int LoopLimit = 100;
         public override string ToString()
         {
             // TODO
@@ -21,9 +22,8 @@ namespace Model.AI.BehaviorTrees
         public BehaviorTree(IBehavior firstChildBehavior)
         {
             _rootNode = new Decorator(firstChildBehavior);
-            BuildTreeGraph();
             Reset();
-            BehaviorQueue.Enqueue(_rootNode);
+            BuildTreeGraph();
         }
 
         private void BuildTreeGraph()
@@ -52,6 +52,7 @@ namespace Model.AI.BehaviorTrees
         private readonly List<IBehavior> _nodes = new List<IBehavior>();
         private readonly Dictionary<IBehavior, List<IBehavior>> _adjacencyLists = new Dictionary<IBehavior, List<IBehavior>>();
         private readonly Queue<IBehavior> _treeTraversalQueue = new Queue<IBehavior>();
+        private int _loopCount = 0;
 
         private void SimpleImplicitTreeTraversal()
         {
@@ -68,6 +69,7 @@ namespace Model.AI.BehaviorTrees
 
         public void Reset()
         {
+            _loopCount = 0;
             CurrentStatus = Status.Clean;
             CurrentBehavior = null;
             BehaviorQueue.Clear();
@@ -89,19 +91,27 @@ namespace Model.AI.BehaviorTrees
                 return;
             }
 
-            var currentBehavior = BehaviorQueue.Dequeue();
+            CurrentBehavior = BehaviorQueue.Dequeue();
 
-            var status = currentBehavior.Tick(this);
+            var status = CurrentBehavior.Tick(this);
             if (status == Status.Running)
-                BehaviorQueue.Enqueue(currentBehavior);
+                BehaviorQueue.Enqueue(CurrentBehavior);
 
             StepCompleted?.Invoke();
         }
 
         private void EventDrivenTreeTraversal()
         {
+            StepCompleted += () => _loopCount++;
             while (BehaviorQueue.Count > 0)
+            {
+                if (_loopCount > LoopLimit)
+                {
+                    CurrentStatus = Status.Failure;
+                    break;
+                }
                 Step();
+            }
             BehaviorTraverseCompleted?.Invoke();
         }
 
