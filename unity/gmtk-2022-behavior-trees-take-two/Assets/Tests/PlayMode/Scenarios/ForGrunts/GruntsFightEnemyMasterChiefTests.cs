@@ -58,7 +58,7 @@ namespace Tests.PlayMode.Scenarios.ForGrunts
             // A grunt can see master chief if he is 3m away
             sut.transform.position = Vector3.zero;
             testMasterChief.transform.position = sut.transform.position + Vector3.forward * 3;
-            yield return null;
+            yield return new WaitForSeconds(0.5f);
 
             Assert.IsTrue(targetAcquired);
             Assert.AreEqual(testMasterChief.transform, acquiredTargetCapture);
