@@ -89,5 +89,33 @@ namespace Tests.EditMode.Model.AI.BehaviorTrees.BuildingBlocks
             Assert.AreEqual(Status.Success, sut.CurrentStatus);
             Assert.IsTrue(nextBehaviorCalled);
         } 
+        [Test]
+        public void Sequences_CanBeCalledAgain_AfterReset()
+        {
+            var sut = new Sequence();
+            var previousBehaviorCallCount = 0;
+            var nextBehaviorCallCount = 0;
+            var previousBehavior = new Conditional(() =>
+            {
+                previousBehaviorCallCount++;
+                return true;
+            });
+            var nextBehavior = new TaskAction(() =>
+            {
+                nextBehaviorCallCount++;
+                return Status.Success;
+            });
+            sut.AddChild(previousBehavior);
+            sut.AddChild(nextBehavior);
+            var testBehaviorTree = new BehaviorTree(sut);
+
+            testBehaviorTree.Evaluate();
+            testBehaviorTree.Reset();
+            testBehaviorTree.Evaluate();
+
+            Assert.AreEqual(2, previousBehaviorCallCount);
+            Assert.AreEqual(2, nextBehaviorCallCount);
+            Assert.AreEqual(Status.Success, sut.CurrentStatus);
+        } 
     }
 }
