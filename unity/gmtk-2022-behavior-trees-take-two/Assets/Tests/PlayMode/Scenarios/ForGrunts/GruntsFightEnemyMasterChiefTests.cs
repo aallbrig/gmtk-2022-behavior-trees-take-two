@@ -83,8 +83,7 @@ namespace Tests.PlayMode.Scenarios.ForGrunts
 
             // A grunt move towards master chief
             sut.transform.position = Vector3.zero;
-            var masterChiefWithinRange = sut.transform.position + Vector3.forward * (weaponUser.Weapon.EffectiveRange + 1);
-            testMasterChief.transform.position = masterChiefWithinRange;
+            testMasterChief.transform.position = new Vector3(0, 0, 4);
             yield return new WaitForSeconds(1.0f);
 
             Assert.IsTrue(movingToMasterChief);
