@@ -1,3 +1,4 @@
+using System;
 using Generated;
 using Model.Player;
 using UnityEngine;
@@ -54,12 +55,14 @@ namespace MonoBehaviours.Controllers
         {
             pointerStartPosition = _controls.MasterChief.PointerPosition.ReadValue<Vector2>();
             isInputing = true;
+            UserInputStart?.Invoke();
         }
 
         private void HandlePointerPressExit(InputAction.CallbackContext ctx)
         {
             isInputing = false;
             DesiredDirectionInWorld = Vector3.zero;
+            UserInputEnd?.Invoke();
         }
 
         private void CalculateRelativeMovement()
@@ -83,6 +86,9 @@ namespace MonoBehaviours.Controllers
         {
             get => desiredWorldDirection;
             private set => desiredWorldDirection = value;
-        } 
+        }
+
+        public event Action UserInputStart;
+        public event Action UserInputEnd;
     }
 }

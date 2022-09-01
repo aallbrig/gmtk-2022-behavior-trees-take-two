@@ -97,7 +97,7 @@ namespace MonoBehaviours
             if (WeaponsUser.Weapon != default && distanceToTarget > WeaponsUser.Weapon.EffectiveRange)
             {
                 DebugLog($"moving to target (pos {target.transform.position}) -- running");
-                MovingCloserToTarget?.Invoke();
+                MovingCloserToTarget?.Invoke(target.gameObject);
                 agent.SetDestination(target.position);
                 return Status.Running;
             }
@@ -111,11 +111,20 @@ namespace MonoBehaviours
             return Status.Failure;
         }
 
-        public event Action MovingCloserToTarget;
+        public event Action<GameObject> MovingCloserToTarget;
 
         public void DebugLog(string logMessage)
         {
-            if (debugEnabled) Debug.Log($"{name} | {logMessage}");
+            if (DebugEnabled)
+            {
+                Debug.Log($"{name} | <Grunt> | {logMessage}");
+            }
+        }
+
+        public bool DebugEnabled
+        {
+            get => debugEnabled;
+            set => debugEnabled = value;
         }
     }
 }

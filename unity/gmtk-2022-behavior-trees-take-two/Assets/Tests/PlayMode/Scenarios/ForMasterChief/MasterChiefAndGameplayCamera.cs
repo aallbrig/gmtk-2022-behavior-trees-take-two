@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
 using Model.Player;
+using MonoBehaviours;
+using MonoBehaviours.Brains;
 using MonoBehaviours.Controllers;
 using NUnit.Framework;
 using UnityEngine;
@@ -63,16 +65,15 @@ namespace Tests.PlayMode.Scenarios.ForMasterChief
                 ExpectedDesiredDirection = expectedDesiredDirection;
                 TestMessage = testMessage;
             }
-
         }
-         private static LocomotionTouchInput[] _locomotionTouchInput = {
-             new LocomotionTouchInput("Up input", Vector2.zero, Vector2.up, new Vector3(0, 0, 1f)),
-             new LocomotionTouchInput("Down input", Vector2.zero, Vector2.down, new Vector3(0, 0, -1.0f)),
-             new LocomotionTouchInput("Left input", Vector2.zero, Vector2.left, new Vector3(-1.0f,0,0)),
-             new LocomotionTouchInput("Right input", Vector2.zero, Vector2.right, new Vector3(1f,0,0)),
-         };
+        private static LocomotionTouchInput[] _locomotionTouchInput = {
+         new LocomotionTouchInput("Up input", Vector2.zero, Vector2.up, new Vector3(0, 0, 1f)),
+         new LocomotionTouchInput("Down input", Vector2.zero, Vector2.down, new Vector3(0, 0, -1.0f)),
+         new LocomotionTouchInput("Left input", Vector2.zero, Vector2.left, new Vector3(-1.0f,0,0)),
+         new LocomotionTouchInput("Right input", Vector2.zero, Vector2.right, new Vector3(1f,0,0)),
+        };
 
-         [UnityTest]
+        [UnityTest]
         public IEnumerator MasterChief_Locomotion_TouchscreenInput([ValueSource(nameof(_locomotionTouchInput))] LocomotionTouchInput input)
         {
             var pointer = InputSystem.AddDevice<Pointer>();
@@ -94,6 +95,50 @@ namespace Tests.PlayMode.Scenarios.ForMasterChief
             // master chief should now know which direction to move
             var locomotion = _sutPrefabInstance.GetComponent<ILocomotion>();
             Assert.That(locomotion.DesiredDirectionInWorld, Is.EqualTo(input.ExpectedDesiredDirection).Using(Vector3EqualityComparer.Instance), input.TestMessage);
+        }
+
+        public class MasterChiefCanShootTestCase
+        {
+            public readonly string TestMessage;
+            public MasterChiefCanShootTestCase(string testMessage, float waitTimeInSeconds, Vector3 gruntPosition)
+            {
+                TestMessage = testMessage;
+                WaitTimeInSeconds = waitTimeInSeconds;
+                GruntPosition = gruntPosition;
+            }
+
+            public float WaitTimeInSeconds { get; }
+
+            public Vector3 GruntPosition { get; }
+        }
+        private static MasterChiefCanShootTestCase[] _masterChiefCanShootTestCases = {
+            new MasterChiefCanShootTestCase("shoots grunt in front of master chief", 1.0f, new Vector3(0, 0, 10)),
+            new MasterChiefCanShootTestCase("turns and shoots grunt, given enough time", 1.0f, new Vector3(0, 0, -10))
+        };
+        [UnityTest]
+        public IEnumerator MasterChief_ShootsGrunt_NoMatterOrientation([ValueSource(nameof(_masterChiefCanShootTestCases))] MasterChiefCanShootTestCase input)
+        {
+            var shootingTargetEventFired = false;
+            var targetAcquiredEventFired = false;
+            _sutPrefabInstance = Object.Instantiate(Resources.Load<GameObject>("Prefabs/Master Chief (Player)"));
+            _sutPrefabInstance.GetComponent<MasterChief>().TargetAcquired += _ => targetAcquiredEventFired = true;
+            _sutPrefabInstance.GetComponent<MasterChief>().ShootingTarget += _ => shootingTargetEventFired = true;
+            _sutPrefabInstance.GetComponent<BehaviorTreeRunner>().config.timeBetween = 0.01f;
+            _destroyMeAtEnd.Add(_sutPrefabInstance);
+            var virtualCamera = _testGameplayCameraInstance.GetComponent<CinemachineVirtualCamera>();
+            virtualCamera.LookAt = _sutPrefabInstance.transform;
+            virtualCamera.Follow = _sutPrefabInstance.transform;
+            _sutPrefabInstance.GetComponent<PlayerController>().perspectiveCamera = _testMainCameraInstance.GetComponent<Camera>();
+            
+            var testGruntInstance = Object.Instantiate(Resources.Load<GameObject>("Prefabs/Grunt (AI)"));
+            testGruntInstance.GetComponent<Transform>().position = input.GruntPosition;
+            _destroyMeAtEnd.Add(testGruntInstance );
+            yield return null;
+
+            yield return new WaitForSeconds(input.WaitTimeInSeconds);
+
+            Assert.IsTrue(targetAcquiredEventFired);
+            Assert.IsTrue(shootingTargetEventFired);
         }
     }
 }

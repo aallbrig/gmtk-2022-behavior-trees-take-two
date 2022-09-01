@@ -29,6 +29,8 @@ namespace Tests.PlayMode.Scenarios.ForGrunts
             _sutPrefabInstance = Object.Instantiate(Resources.Load<GameObject>("Prefabs/Grunt (AI)"));
             _destroyMeAtEnd.Add(_sutPrefabInstance);
             _testMasterChiefInstance = Object.Instantiate(Resources.Load<GameObject>("Prefabs/Master Chief (Player)"));
+            _testMasterChiefInstance.GetComponent<BehaviorTreeRunner>().DebugEnabled = false;
+            _testMasterChiefInstance.GetComponent<MasterChief>().DebugEnabled = false;
             _testMasterChiefInstance.transform.position = Vector3.forward * 10;
             _destroyMeAtEnd.Add(_testMasterChiefInstance);
             yield return null;
@@ -48,13 +50,11 @@ namespace Tests.PlayMode.Scenarios.ForGrunts
             var sut = _sutPrefabInstance;
             sut.GetComponent<BehaviorTreeRunner>().config.timeBetween = 0.01f;
             var testMasterChief = _testMasterChiefInstance;
-            var targetAcquired = false;
-            Transform acquiredTargetCapture = null;
+            var movingCloserToTargetEventCalled = false;
             var grunt = sut.GetComponent<Grunt>();
-            grunt.TargetAcquired += acquiredTarget =>
+            grunt.MovingCloserToTarget += target =>
             {
-                acquiredTargetCapture = acquiredTarget.Transform;
-                targetAcquired = true;
+                movingCloserToTargetEventCalled = true;
             };
 
             // A grunt can see master chief if he is 3m away
@@ -62,8 +62,7 @@ namespace Tests.PlayMode.Scenarios.ForGrunts
             testMasterChief.transform.position = sut.transform.position + Vector3.forward * 3;
             yield return new WaitForSeconds(1.0f);
 
-            Assert.IsTrue(targetAcquired);
-            Assert.AreEqual(testMasterChief.transform, acquiredTargetCapture);
+            Assert.IsTrue(movingCloserToTargetEventCalled);
         }
 
         [UnityTest]
@@ -77,7 +76,10 @@ namespace Tests.PlayMode.Scenarios.ForGrunts
             sut.GetComponent<BehaviorTreeRunner>().config.timeBetween = 0.01f;
             var movingToMasterChief = false;
             var grunt = _sutPrefabInstance.GetComponent<Grunt>();
-            grunt.MovingCloserToTarget += () => movingToMasterChief = true;
+            grunt.MovingCloserToTarget += _ =>
+            {
+                movingToMasterChief = true;
+            };
 
             // A grunt move towards master chief
             sut.transform.position = Vector3.zero;

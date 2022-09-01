@@ -338,6 +338,8 @@ GameObject:
   - component: {fileID: 752961172572788411}
   - component: {fileID: 1438179453}
   - component: {fileID: 1284371619780372576}
+  - component: {fileID: 5804650101983528832}
+  - component: {fileID: 8163439478219278851}
   m_Layer: 6
   m_Name: Master Chief (Player)
   m_TagString: Untagged
@@ -362,6 +364,7 @@ Transform:
   - {fileID: 1431641788}
   - {fileID: 8184650866024914429}
   - {fileID: 4091874215390447865}
+  - {fileID: 4747044893870715862}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -409,6 +412,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0a78b4c3fb54a48b2cd5557dee76014, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  behaviorTreeRunner: {fileID: 0}
+  proximitySensor: {fileID: 0}
+  debugEnabled: 1
 --- !u!114 &1438179453
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -443,6 +449,39 @@ MonoBehaviour:
   desiredWorldDirection: {x: 0, y: 0, z: 0}
   isGrounded: 1
   velocity: {x: 0, y: 0, z: 0}
+--- !u!114 &5804650101983528832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3128410687428570384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8f48a73114c418fb670447416da34fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  config: {fileID: 11400000, guid: 778a06a44a551431d8dbe56c5717e8ae, type: 2}
+  debugEnabled: 1
+  timeLastRun: 0
+  timeSinceLastRun: 0
+--- !u!114 &8163439478219278851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3128410687428570384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 883f654d9ae74d8788958c59831f9a55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sensorConfig: {fileID: 11400000, guid: bcc8d269bd1654e32b048305419ac144, type: 2}
+  sensorTrigger: {fileID: 7321756778002479952}
+  friendlies: []
+  enemies: []
+  cover: []
 --- !u!1 &5105885526752914490
 GameObject:
   m_ObjectHideFlags: 0
@@ -554,3 +593,47 @@ Transform:
   m_Father: {fileID: 1899578382409793298}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &9041276078088712193
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4747044893870715862}
+  - component: {fileID: 7321756778002479952}
+  m_Layer: 6
+  m_Name: Proximity Sensor Collider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4747044893870715862
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9041276078088712193}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1899578382409793298}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &7321756778002479952
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9041276078088712193}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}

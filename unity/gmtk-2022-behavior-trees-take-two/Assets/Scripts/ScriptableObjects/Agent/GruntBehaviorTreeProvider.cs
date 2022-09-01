@@ -1,6 +1,7 @@
 using Model.AI.BehaviorTrees;
 using Model.AI.BehaviorTrees.BuildingBlocks;
 using MonoBehaviours;
+using UnityEngine;
 
 namespace ScriptableObjects.Agent
 {

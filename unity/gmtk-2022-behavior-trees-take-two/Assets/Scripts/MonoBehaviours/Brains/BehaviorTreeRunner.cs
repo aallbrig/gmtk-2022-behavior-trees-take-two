@@ -2,7 +2,6 @@ using System;
 using Model.AI.BehaviorTrees;
 using Model.Interfaces;
 using ScriptableObjects.Agent;
-using Unity.Plastic.Antlr3.Runtime.Debug;
 using UnityEngine;
 
 namespace MonoBehaviours.Brains
@@ -37,7 +36,11 @@ namespace MonoBehaviours.Brains
 
         public void Run(float time)
         {
-            if (BehaviorTree == null) return;
+            if (BehaviorTree == null)
+            {
+                DebugLog("No behavior tree");
+                return;
+            }
 
             timeSinceLastRun = time - timeLastRun;
             if (timeSinceLastRun >= Config.TimeBetween)
@@ -67,7 +70,16 @@ namespace MonoBehaviours.Brains
 
         public void DebugLog(string logMessage)
         {
-            if (debugEnabled) Debug.Log($"{name} | {logMessage}");
+            if (DebugEnabled)
+            {
+                Debug.Log($"{name} | <Behavior Tree Runner> | {logMessage}");
+            }
+        }
+
+        public bool DebugEnabled
+        {
+            get => debugEnabled;
+            set => debugEnabled = value;
         }
     }
 
