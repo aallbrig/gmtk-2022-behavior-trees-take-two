@@ -13,7 +13,6 @@ namespace MonoBehaviours.Controllers
         public Camera perspectiveCamera;
         public float movementSpeed = 4;
         public float rotationSpeed = 15;
-        public bool isInputing = false;
         private CharacterController _characterController;
         private Camera _perspectiveCamera;
         private PlayerControls _controls;
@@ -24,6 +23,7 @@ namespace MonoBehaviours.Controllers
         [SerializeField] private bool isGrounded = true;
         [SerializeField] private Vector3 velocity;
         [SerializeField] private bool debugEnabled;
+        private bool touchInputing = false;
 
         private void Awake() => _controls = new PlayerControls();
         private void OnEnable() => _controls.Enable();
@@ -35,11 +35,7 @@ namespace MonoBehaviours.Controllers
             _characterController ??= GetComponent<CharacterController>();
             _controls.MasterChief.PointerButtonPress.started += HandlePointerPressStart;
             _controls.MasterChief.PointerButtonPress.canceled += HandlePointerPressExit;
-            _controls.MasterChief.PointerPosition.performed += context =>
-            {
-                pointerPerformedPosition = context.ReadValue<Vector2>();
-                CalculateRelativeMovement((pointerPerformedPosition - pointerStartPosition).normalized);
-            };
+            _controls.MasterChief.PointerPosition.performed += SyncPointerPosition;
             _controls.MasterChief.MoveJoystick.started += HandleMoveJoystickStart;
             _controls.MasterChief.MoveJoystick.canceled += HandleMoveJoystickEnd;
             _controls.MasterChief.MoveJoystick.performed += HandleMoveJoystickPerformed;
@@ -48,19 +44,21 @@ namespace MonoBehaviours.Controllers
         {
             var value = ctx.ReadValue<Vector2>();
             CalculateRelativeMovement(value);
-            DebugLog($"start {value}");
-        }
-        private void HandleMoveJoystickEnd(InputAction.CallbackContext ctx)
-        {
-            var value = ctx.ReadValue<Vector2>();
-            CalculateRelativeMovement(Vector2.zero);
-            DebugLog($"end {value}");
+            DebugLog($" <JoystickMove> | start {value}");
+            UserInputStart?.Invoke();
         }
         private void HandleMoveJoystickPerformed(InputAction.CallbackContext ctx)
         {
             var value = ctx.ReadValue<Vector2>();
             CalculateRelativeMovement(value);
-            DebugLog($"performed {value}");
+            DebugLog($" <JoystickMove> | performed {value}");
+        }
+        private void HandleMoveJoystickEnd(InputAction.CallbackContext ctx)
+        {
+            var value = ctx.ReadValue<Vector2>();
+            CalculateRelativeMovement(Vector2.zero);
+            DebugLog($" <JoystickMove> | end");
+            UserInputEnd?.Invoke();
         }
         private void Update()
         {
@@ -76,21 +74,36 @@ namespace MonoBehaviours.Controllers
 
         private void HandlePointerPressStart(InputAction.CallbackContext ctx)
         {
-            pointerStartPosition = _controls.MasterChief.PointerPosition.ReadValue<Vector2>();
-            isInputing = true;
+            touchInputing = true;
+            pointerStartPosition = pointerPerformedPosition;
+            DebugLog($" <TouchMove> | (start pos: {pointerStartPosition})");
             UserInputStart?.Invoke();
+        }
+        private void SyncPointerPosition(InputAction.CallbackContext ctx)
+        {
+            pointerPerformedPosition = ctx.ReadValue<Vector2>();
+            if (touchInputing)
+            {
+                var inputDirection = (pointerPerformedPosition - pointerStartPosition).normalized;
+                DebugLog($" <TouchMove> | performed (inputDir {inputDirection}, start pos: {pointerStartPosition} end pos: {pointerPerformedPosition})");
+                CalculateRelativeMovement(inputDirection);
+            }
         }
 
         private void HandlePointerPressExit(InputAction.CallbackContext ctx)
         {
-            isInputing = false;
-            DesiredDirectionInWorld = Vector3.zero;
+            touchInputing = false;
+            CalculateRelativeMovement(Vector2.zero);
             UserInputEnd?.Invoke();
         }
 
         private void CalculateRelativeMovement(Vector2 inputDirection)
         {
-            if (isInputing == false) return;
+            if (inputDirection == Vector2.zero)
+            {
+                DesiredDirectionInWorld = Vector3.zero;
+                return;
+            }
 
             var cameraTransform = _perspectiveCamera.transform;
             var right = cameraTransform.right;

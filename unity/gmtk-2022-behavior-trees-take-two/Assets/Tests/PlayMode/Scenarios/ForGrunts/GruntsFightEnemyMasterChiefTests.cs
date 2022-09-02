@@ -58,19 +58,17 @@ namespace Tests.PlayMode.Scenarios.ForGrunts
             var sut = _sutPrefabInstance;
             sut.GetComponent<BehaviorTreeRunner>().config.timeBetween = 0.01f;
             var testMasterChief = _testMasterChiefInstance;
-            var movingCloserToTargetEventCalled = false;
+            var targetingMasterChief = false;
             var grunt = sut.GetComponent<Grunt>();
-            grunt.MovingCloserToTarget += target =>
-            {
-                movingCloserToTargetEventCalled = true;
-            };
+            grunt.TargetAcquired += _ => targetingMasterChief = true;
 
             // A grunt can see master chief if he is 3m away
             sut.transform.position = Vector3.zero;
-            testMasterChief.transform.position = new Vector3(0, 0, 3.5f);
+            testMasterChief.transform.position = new Vector3(0, 0, 2);
+            Debug.Log($"distance between grunt and test master chief {Vector3.Distance(sut.transform.position, testMasterChief.transform.position)}");
             yield return new WaitForSeconds(1.0f);
 
-            Assert.IsTrue(movingCloserToTargetEventCalled);
+            Assert.IsTrue(targetingMasterChief);
         }
 
         [UnityTest]
