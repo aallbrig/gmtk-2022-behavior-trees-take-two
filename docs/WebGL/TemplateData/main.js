@@ -7,7 +7,7 @@ var config = {
     streamingAssetsUrl: "StreamingAssets",
     companyName: "Andrew Allbright",
     productName: "gmtk-2022-behavior-trees-take-two",
-    productVersion: "0.0.78",
+    productVersion: "0.0.83",
     devicePixelRatio: 1,
 }
 
