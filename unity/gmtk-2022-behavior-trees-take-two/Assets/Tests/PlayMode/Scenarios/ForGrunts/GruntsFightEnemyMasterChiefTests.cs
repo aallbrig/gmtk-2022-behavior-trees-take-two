@@ -65,9 +65,10 @@ namespace Tests.PlayMode.Scenarios.ForGrunts
             // A grunt can see master chief if he is 3m away
             sut.transform.position = Vector3.zero;
             testMasterChief.transform.position = new Vector3(0, 0, 3);
-            yield return null;
+            yield return new WaitForEndOfFrame();
             Debug.Log($"distance between grunt and test master chief {Vector3.Distance(sut.transform.position, testMasterChief.transform.position)}");
             yield return new WaitForSeconds(1.0f);
+            Debug.Log($"distance between grunt and test master chief {Vector3.Distance(sut.transform.position, testMasterChief.transform.position)}");
 
             Assert.IsTrue(targetingMasterChief);
         }
