@@ -15,49 +15,45 @@ namespace Tests.PlayMode.Scenarios.ForGrunts
 {
     public class GruntsFightEnemyMasterChiefTests
     {
-        private GameObject _sutPrefabInstance;
-        private GameObject _testMasterChiefInstance;
-        private GameObject _testPlatform;
-        private readonly List<GameObject> _destroyMeAtEnd = new List<GameObject>();
-
-        [UnitySetUp]
-        public IEnumerator SetUp()
+        public void SetUp(List<GameObject> destroyList, out GameObject sut, out GameObject testMasterChief, out GameObject platform)
         {
-            _testPlatform = Object.Instantiate(Resources.Load<GameObject>("Prefabs/Environment/Test Combat Platform"));
-            foreach (var debugger in _testPlatform.GetComponents<IMonobehaviourDebugLogger>())
+            var testPlatform = Object.Instantiate(Resources.Load<GameObject>("Prefabs/Environment/Test Combat Platform"));
+            foreach (var debugger in testPlatform.GetComponents<IMonobehaviourDebugLogger>())
                 debugger.DebugEnabled = false;
             // Get nav mesh surface component and render out a nav mesh
-            _testPlatform.GetComponent<NavMeshSurface>().BuildNavMesh();
-            _destroyMeAtEnd.Add(_testPlatform);
-            _sutPrefabInstance = Object.Instantiate(Resources.Load<GameObject>("Prefabs/Grunt (AI)"));
-            foreach (var debugger in _sutPrefabInstance.GetComponents<IMonobehaviourDebugLogger>())
+            testPlatform.GetComponent<NavMeshSurface>().BuildNavMesh();
+            destroyList.Add(testPlatform);
+            var sutPrefabInstance = Object.Instantiate(Resources.Load<GameObject>("Prefabs/Grunt (AI)"));
+            foreach (var debugger in sutPrefabInstance.GetComponents<IMonobehaviourDebugLogger>())
                 debugger.DebugEnabled = true;
-            _destroyMeAtEnd.Add(_sutPrefabInstance);
-            _testMasterChiefInstance = Object.Instantiate(Resources.Load<GameObject>("Prefabs/Master Chief (Player)"));
-            foreach (var debugger in _testMasterChiefInstance.GetComponents<IMonobehaviourDebugLogger>())
+            destroyList.Add(sutPrefabInstance);
+            var testMasterChiefInstance = Object.Instantiate(Resources.Load<GameObject>("Prefabs/Master Chief (Player)"));
+            foreach (var debugger in testMasterChiefInstance.GetComponents<IMonobehaviourDebugLogger>())
                 debugger.DebugEnabled = false;
-            _testMasterChiefInstance.GetComponent<BehaviorTreeRunner>().DebugEnabled = false;
-            _testMasterChiefInstance.GetComponent<MasterChief>().DebugEnabled = false;
-            _testMasterChiefInstance.GetComponent<ProximitySensor>().DebugEnabled = false;
-            _testMasterChiefInstance.transform.position = Vector3.forward * 30;
-            _destroyMeAtEnd.Add(_testMasterChiefInstance);
-            yield return null;
+            testMasterChiefInstance.GetComponent<BehaviorTreeRunner>().DebugEnabled = false;
+            testMasterChiefInstance.GetComponent<MasterChief>().DebugEnabled = false;
+            testMasterChiefInstance.GetComponent<ProximitySensor>().DebugEnabled = false;
+            testMasterChiefInstance.transform.position = Vector3.forward * 30;
+            destroyList.Add(testMasterChiefInstance);
+            sut = sutPrefabInstance;
+            testMasterChief = testMasterChiefInstance;
+            platform = testPlatform;
         }
 
-        [TearDown]
-        public void Teardown()
+        public void Teardown(List<GameObject> destroyList)
         {
-            foreach (var gameObject in _destroyMeAtEnd)
+            foreach (var gameObject in destroyList)
                 Object.Destroy(gameObject);
-            _destroyMeAtEnd.Clear();
+            destroyList.Clear();
         }
 
         [UnityTest]
         public IEnumerator GruntTargetsMasterChief_IfCloseEnough()
         {
-            var sut = _sutPrefabInstance;
+            var destroyList = new List<GameObject>();
+            SetUp(destroyList, out var sut, out var testMasterChief, out _);
+
             sut.GetComponent<BehaviorTreeRunner>().config.timeBetween = 0.01f;
-            var testMasterChief = _testMasterChiefInstance;
             var targetingMasterChief = false;
             var grunt = sut.GetComponent<Grunt>();
             grunt.TargetAcquired += _ => targetingMasterChief = true;
@@ -70,19 +66,20 @@ namespace Tests.PlayMode.Scenarios.ForGrunts
             Debug.Log($"distance between grunt and test master chief {Vector3.Distance(sut.transform.position, testMasterChief.transform.position)}");
 
             Assert.IsTrue(targetingMasterChief);
+            Teardown(destroyList);
         }
 
         [UnityTest]
         public IEnumerator GruntMovesCloseToMasterChief_IfOutsideEffectiveWeaponRange()
         {
-            var sut = _sutPrefabInstance;
-            var testMasterChief = _testMasterChiefInstance;
+            var destroyList = new List<GameObject>();
+            SetUp(destroyList, out var sut, out var testMasterChief, out _);
             var weaponUser = sut.GetComponent<IWeaponsUser>();
             weaponUser.Weapon = Substitute.For<IFirearm>();
             weaponUser.Weapon.EffectiveRange.Returns(1f);
             sut.GetComponent<BehaviorTreeRunner>().config.timeBetween = 0.01f;
             var movingToMasterChief = false;
-            var grunt = _sutPrefabInstance.GetComponent<Grunt>();
+            var grunt = sut.GetComponent<Grunt>();
             grunt.MovingCloserToTarget += _ =>
             {
                 movingToMasterChief = true;
@@ -95,6 +92,7 @@ namespace Tests.PlayMode.Scenarios.ForGrunts
             yield return new WaitForSeconds(1.0f);
 
             Assert.IsTrue(movingToMasterChief);
+            Teardown(destroyList);
         }
     }
 }
