@@ -34,7 +34,7 @@ namespace Tests.PlayMode.Scenarios.ForGrunts
                 debugger.DebugEnabled = true;
             _destroyMeAtEnd.Add(_sutPrefabInstance);
             _testMasterChiefInstance = Object.Instantiate(Resources.Load<GameObject>("Prefabs/Master Chief (Player)"));
-            foreach (var debugger in _sutPrefabInstance.GetComponents<IMonobehaviourDebugLogger>())
+            foreach (var debugger in _testMasterChiefInstance.GetComponents<IMonobehaviourDebugLogger>())
                 debugger.DebugEnabled = false;
             _testMasterChiefInstance.GetComponent<BehaviorTreeRunner>().DebugEnabled = false;
             _testMasterChiefInstance.GetComponent<MasterChief>().DebugEnabled = false;
@@ -64,7 +64,8 @@ namespace Tests.PlayMode.Scenarios.ForGrunts
 
             // A grunt can see master chief if he is 3m away
             sut.transform.position = Vector3.zero;
-            testMasterChief.transform.position = new Vector3(0, 0, 2);
+            testMasterChief.transform.position = new Vector3(0, 0, 3);
+            yield return null;
             Debug.Log($"distance between grunt and test master chief {Vector3.Distance(sut.transform.position, testMasterChief.transform.position)}");
             yield return new WaitForSeconds(1.0f);
 
