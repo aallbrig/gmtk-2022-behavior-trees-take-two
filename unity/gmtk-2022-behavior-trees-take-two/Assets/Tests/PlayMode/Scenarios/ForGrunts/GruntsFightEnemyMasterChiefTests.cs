@@ -4,6 +4,7 @@ using Model.Interfaces;
 using Model.Interfaces.BattleSystem;
 using MonoBehaviours;
 using MonoBehaviours.Brains;
+using MonoBehaviours.Sensors;
 using NSubstitute;
 using NUnit.Framework;
 using UnityEngine;
@@ -31,7 +32,8 @@ namespace Tests.PlayMode.Scenarios.ForGrunts
             _testMasterChiefInstance = Object.Instantiate(Resources.Load<GameObject>("Prefabs/Master Chief (Player)"));
             _testMasterChiefInstance.GetComponent<BehaviorTreeRunner>().DebugEnabled = false;
             _testMasterChiefInstance.GetComponent<MasterChief>().DebugEnabled = false;
-            _testMasterChiefInstance.transform.position = Vector3.forward * 10;
+            _testMasterChiefInstance.GetComponent<ProximitySensor>().DebugEnabled = false;
+            _testMasterChiefInstance.transform.position = Vector3.forward * 30;
             _destroyMeAtEnd.Add(_testMasterChiefInstance);
             yield return null;
         }
@@ -59,7 +61,7 @@ namespace Tests.PlayMode.Scenarios.ForGrunts
 
             // A grunt can see master chief if he is 3m away
             sut.transform.position = Vector3.zero;
-            testMasterChief.transform.position = sut.transform.position + Vector3.forward * 3;
+            testMasterChief.transform.position = new Vector3(0, 0, 3.5f);
             yield return new WaitForSeconds(1.0f);
 
             Assert.IsTrue(movingCloserToTargetEventCalled);
