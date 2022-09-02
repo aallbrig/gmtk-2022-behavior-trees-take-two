@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
+using Model.Interfaces;
 using Model.Player;
 using MonoBehaviours;
 using MonoBehaviours.Brains;
@@ -34,10 +35,14 @@ namespace Tests.PlayMode.Scenarios.ForMasterChief
             _destroyMeAtEnd.Add(_testMainCameraInstance);
 
             _testGameplayCameraInstance = Object.Instantiate(Resources.Load<GameObject>("Prefabs/Player Camera"));
+            foreach (var debugger in _testGameplayCameraInstance.GetComponents<IMonobehaviourDebugLogger>())
+                debugger.DebugEnabled = false;
             _testGameplayCameraInstance.name = "Test gameplay camera rig (vcam)";
             _destroyMeAtEnd.Add(_testGameplayCameraInstance);
 
             _testPlatform = Object.Instantiate(Resources.Load<GameObject>("Prefabs/Environment/Test Combat Platform"));
+            foreach (var debugger in _testPlatform.GetComponents<IMonobehaviourDebugLogger>())
+                debugger.DebugEnabled = false;
             _testPlatform.GetComponent<NavMeshSurface>().BuildNavMesh();
             // Get nav mesh surface component and render out a nav mesh
             _destroyMeAtEnd.Add(_testPlatform);
@@ -79,6 +84,8 @@ namespace Tests.PlayMode.Scenarios.ForMasterChief
             var pointer = InputSystem.AddDevice<Pointer>();
 
             _sutPrefabInstance = Object.Instantiate(Resources.Load<GameObject>("Prefabs/Master Chief (Player)"));
+            foreach (var debugger in _sutPrefabInstance.GetComponents<IMonobehaviourDebugLogger>())
+                debugger.DebugEnabled = true;
             _destroyMeAtEnd.Add(_sutPrefabInstance);
             var virtualCamera = _testGameplayCameraInstance.GetComponent<CinemachineVirtualCamera>();
             virtualCamera.LookAt = _sutPrefabInstance.transform;
@@ -121,6 +128,8 @@ namespace Tests.PlayMode.Scenarios.ForMasterChief
             var shootingTargetEventFired = false;
             var targetAcquiredEventFired = false;
             _sutPrefabInstance = Object.Instantiate(Resources.Load<GameObject>("Prefabs/Master Chief (Player)"));
+            foreach (var debugger in _sutPrefabInstance.GetComponents<IMonobehaviourDebugLogger>())
+                debugger.DebugEnabled = true;
             _sutPrefabInstance.GetComponent<MasterChief>().TargetAcquired += _ => targetAcquiredEventFired = true;
             _sutPrefabInstance.GetComponent<MasterChief>().ShootingTarget += _ => shootingTargetEventFired = true;
             _sutPrefabInstance.GetComponent<BehaviorTreeRunner>().config.timeBetween = 0.01f;
@@ -129,7 +138,7 @@ namespace Tests.PlayMode.Scenarios.ForMasterChief
             virtualCamera.LookAt = _sutPrefabInstance.transform;
             virtualCamera.Follow = _sutPrefabInstance.transform;
             _sutPrefabInstance.GetComponent<PlayerController>().perspectiveCamera = _testMainCameraInstance.GetComponent<Camera>();
-            
+
             var testGruntInstance = Object.Instantiate(Resources.Load<GameObject>("Prefabs/Grunt (AI)"));
             testGruntInstance.GetComponent<Transform>().position = input.GruntPosition;
             _destroyMeAtEnd.Add(testGruntInstance );

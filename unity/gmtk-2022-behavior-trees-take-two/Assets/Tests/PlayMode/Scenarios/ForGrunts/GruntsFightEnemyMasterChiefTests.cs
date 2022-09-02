@@ -24,12 +24,18 @@ namespace Tests.PlayMode.Scenarios.ForGrunts
         public IEnumerator SetUp()
         {
             _testPlatform = Object.Instantiate(Resources.Load<GameObject>("Prefabs/Environment/Test Combat Platform"));
+            foreach (var debugger in _testPlatform.GetComponents<IMonobehaviourDebugLogger>())
+                debugger.DebugEnabled = false;
             // Get nav mesh surface component and render out a nav mesh
             _testPlatform.GetComponent<NavMeshSurface>().BuildNavMesh();
             _destroyMeAtEnd.Add(_testPlatform);
             _sutPrefabInstance = Object.Instantiate(Resources.Load<GameObject>("Prefabs/Grunt (AI)"));
+            foreach (var debugger in _sutPrefabInstance.GetComponents<IMonobehaviourDebugLogger>())
+                debugger.DebugEnabled = true;
             _destroyMeAtEnd.Add(_sutPrefabInstance);
             _testMasterChiefInstance = Object.Instantiate(Resources.Load<GameObject>("Prefabs/Master Chief (Player)"));
+            foreach (var debugger in _sutPrefabInstance.GetComponents<IMonobehaviourDebugLogger>())
+                debugger.DebugEnabled = false;
             _testMasterChiefInstance.GetComponent<BehaviorTreeRunner>().DebugEnabled = false;
             _testMasterChiefInstance.GetComponent<MasterChief>().DebugEnabled = false;
             _testMasterChiefInstance.GetComponent<ProximitySensor>().DebugEnabled = false;
@@ -86,6 +92,7 @@ namespace Tests.PlayMode.Scenarios.ForGrunts
             // A grunt move towards master chief
             sut.transform.position = Vector3.zero;
             testMasterChief.transform.position = new Vector3(0, 0, 4);
+            Debug.Log($"distance between grunt and test master chief {Vector3.Distance(sut.transform.position, testMasterChief.transform.position)}");
             yield return new WaitForSeconds(1.0f);
 
             Assert.IsTrue(movingToMasterChief);

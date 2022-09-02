@@ -1627,7 +1627,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1783933469}
-  m_LocalRotation: {x: 0.34727672, y: 0.21462883, z: -0.081980914, w: 0.9091823}
+  m_LocalRotation: {x: 0.34727672, y: 0.21462877, z: -0.081980884, w: 0.90918237}
   m_LocalPosition: {x: -4.38, y: 10, z: -8.18}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -1863,7 +1863,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1284371619780372576, guid: fa0dcb1c5a36f4964a6153047b8dc9c9, type: 3}
       propertyPath: isInputing
-      value: 1
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1284371619780372576, guid: fa0dcb1c5a36f4964a6153047b8dc9c9, type: 3}
+      propertyPath: debugEnabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1284371619780372576, guid: fa0dcb1c5a36f4964a6153047b8dc9c9, type: 3}
       propertyPath: perspectiveCamera
@@ -2320,7 +2324,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8618010626526526602, guid: 69059c57ae7e64711ba7c7834fbaa528, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9091823
+      value: 0.90918237
       objectReference: {fileID: 0}
     - target: {fileID: 8618010626526526602, guid: 69059c57ae7e64711ba7c7834fbaa528, type: 3}
       propertyPath: m_LocalRotation.x
@@ -2328,11 +2332,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8618010626526526602, guid: 69059c57ae7e64711ba7c7834fbaa528, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.21462883
+      value: 0.21462877
       objectReference: {fileID: 0}
     - target: {fileID: 8618010626526526602, guid: 69059c57ae7e64711ba7c7834fbaa528, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.081980914
+      value: -0.081980884
       objectReference: {fileID: 0}
     - target: {fileID: 8618010626526526602, guid: 69059c57ae7e64711ba7c7834fbaa528, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
