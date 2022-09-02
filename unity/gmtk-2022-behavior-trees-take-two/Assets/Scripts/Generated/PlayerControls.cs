@@ -46,6 +46,15 @@ namespace Generated
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""MoveJoystick"",
+                    ""type"": ""Value"",
+                    ""id"": ""a7f3863c-7efc-4811-a574-0332ac31a72a"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -92,6 +101,17 @@ namespace Generated
                     ""action"": ""PointerPosition"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""605feb0e-8f13-4541-b680-1bd12176720b"",
+                    ""path"": ""<Gamepad>/leftStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MoveJoystick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -102,6 +122,7 @@ namespace Generated
             m_MasterChief = asset.FindActionMap("Master Chief", throwIfNotFound: true);
             m_MasterChief_PointerButtonPress = m_MasterChief.FindAction("PointerButtonPress", throwIfNotFound: true);
             m_MasterChief_PointerPosition = m_MasterChief.FindAction("PointerPosition", throwIfNotFound: true);
+            m_MasterChief_MoveJoystick = m_MasterChief.FindAction("MoveJoystick", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -163,12 +184,14 @@ namespace Generated
         private IMasterChiefActions m_MasterChiefActionsCallbackInterface;
         private readonly InputAction m_MasterChief_PointerButtonPress;
         private readonly InputAction m_MasterChief_PointerPosition;
+        private readonly InputAction m_MasterChief_MoveJoystick;
         public struct MasterChiefActions
         {
             private @PlayerControls m_Wrapper;
             public MasterChiefActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
             public InputAction @PointerButtonPress => m_Wrapper.m_MasterChief_PointerButtonPress;
             public InputAction @PointerPosition => m_Wrapper.m_MasterChief_PointerPosition;
+            public InputAction @MoveJoystick => m_Wrapper.m_MasterChief_MoveJoystick;
             public InputActionMap Get() { return m_Wrapper.m_MasterChief; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -184,6 +207,9 @@ namespace Generated
                     @PointerPosition.started -= m_Wrapper.m_MasterChiefActionsCallbackInterface.OnPointerPosition;
                     @PointerPosition.performed -= m_Wrapper.m_MasterChiefActionsCallbackInterface.OnPointerPosition;
                     @PointerPosition.canceled -= m_Wrapper.m_MasterChiefActionsCallbackInterface.OnPointerPosition;
+                    @MoveJoystick.started -= m_Wrapper.m_MasterChiefActionsCallbackInterface.OnMoveJoystick;
+                    @MoveJoystick.performed -= m_Wrapper.m_MasterChiefActionsCallbackInterface.OnMoveJoystick;
+                    @MoveJoystick.canceled -= m_Wrapper.m_MasterChiefActionsCallbackInterface.OnMoveJoystick;
                 }
                 m_Wrapper.m_MasterChiefActionsCallbackInterface = instance;
                 if (instance != null)
@@ -194,6 +220,9 @@ namespace Generated
                     @PointerPosition.started += instance.OnPointerPosition;
                     @PointerPosition.performed += instance.OnPointerPosition;
                     @PointerPosition.canceled += instance.OnPointerPosition;
+                    @MoveJoystick.started += instance.OnMoveJoystick;
+                    @MoveJoystick.performed += instance.OnMoveJoystick;
+                    @MoveJoystick.canceled += instance.OnMoveJoystick;
                 }
             }
         }
@@ -202,6 +231,7 @@ namespace Generated
         {
             void OnPointerButtonPress(InputAction.CallbackContext context);
             void OnPointerPosition(InputAction.CallbackContext context);
+            void OnMoveJoystick(InputAction.CallbackContext context);
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using Generated;
+using Model.Interfaces;
 using Model.Player;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -7,7 +8,7 @@ using UnityEngine.InputSystem;
 namespace MonoBehaviours.Controllers
 {
     [RequireComponent(typeof(CharacterController))]
-    public class PlayerController : MonoBehaviour, ILocomotion
+    public class PlayerController : MonoBehaviour, ILocomotion, IMonobehaviourDebugLogger
     {
         public Camera perspectiveCamera;
         public float movementSpeed = 4;
@@ -22,6 +23,7 @@ namespace MonoBehaviours.Controllers
         [SerializeField] private Vector3 desiredWorldDirection = Vector3.zero;
         [SerializeField] private bool isGrounded = true;
         [SerializeField] private Vector3 velocity;
+        [SerializeField] private bool debugEnabled;
 
         private void Awake() => _controls = new PlayerControls();
         private void OnEnable() => _controls.Enable();
@@ -36,8 +38,29 @@ namespace MonoBehaviours.Controllers
             _controls.MasterChief.PointerPosition.performed += context =>
             {
                 pointerPerformedPosition = context.ReadValue<Vector2>();
-                CalculateRelativeMovement();
+                CalculateRelativeMovement((pointerPerformedPosition - pointerStartPosition).normalized);
             };
+            _controls.MasterChief.MoveJoystick.started += HandleMoveJoystickStart;
+            _controls.MasterChief.MoveJoystick.canceled += HandleMoveJoystickEnd;
+            _controls.MasterChief.MoveJoystick.performed += HandleMoveJoystickPerformed;
+        }
+        private void HandleMoveJoystickStart(InputAction.CallbackContext ctx)
+        {
+            var value = ctx.ReadValue<Vector2>();
+            CalculateRelativeMovement(value);
+            DebugLog($"start {value}");
+        }
+        private void HandleMoveJoystickEnd(InputAction.CallbackContext ctx)
+        {
+            var value = ctx.ReadValue<Vector2>();
+            CalculateRelativeMovement(Vector2.zero);
+            DebugLog($"end {value}");
+        }
+        private void HandleMoveJoystickPerformed(InputAction.CallbackContext ctx)
+        {
+            var value = ctx.ReadValue<Vector2>();
+            CalculateRelativeMovement(value);
+            DebugLog($"performed {value}");
         }
         private void Update()
         {
@@ -65,11 +88,10 @@ namespace MonoBehaviours.Controllers
             UserInputEnd?.Invoke();
         }
 
-        private void CalculateRelativeMovement()
+        private void CalculateRelativeMovement(Vector2 inputDirection)
         {
             if (isInputing == false) return;
 
-            var inputDirection = (pointerPerformedPosition - pointerStartPosition).normalized;
             var cameraTransform = _perspectiveCamera.transform;
             var right = cameraTransform.right;
             var forward = Vector3.Cross(Vector3.right, Vector3.up);
@@ -90,5 +112,16 @@ namespace MonoBehaviours.Controllers
 
         public event Action UserInputStart;
         public event Action UserInputEnd;
+
+        public void DebugLog(string logMessage)
+        {
+            if (DebugEnabled) Debug.Log($"{name} | <PlayerController> | {logMessage}");
+        }
+
+        public bool DebugEnabled
+        {
+            get => debugEnabled;
+            set => debugEnabled = value;
+        }
     }
 }
